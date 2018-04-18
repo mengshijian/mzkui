@@ -1,5 +1,48 @@
 <template>
     <div>
+         <el-dialog
+        :visible="bestSearchShow"
+        append-to-body
+        width="40%"
+        :before-close='searchClose'
+        >
+        <el-row slot="title" align='middle'>
+            高级查询
+        </el-row>
+        <div >
+            <el-form  status-icon  ref="ruleForm2" label-width="110px" class="demo-ruleForm">
+            <el-form-item label="终端设备编号：" >
+                <el-input type="text"  auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="提取人：">
+                <el-input type="text"  auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="状态：">
+                <el-select v-model="logStateVal" placeholder="状态类别" size='small' style="marginTop:-5px">
+                    <el-option
+                    v-for="item in options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="日期：" >
+                 <el-date-picker
+                v-model="logDateVal"
+                type="datetimerange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期">
+                </el-date-picker>
+            </el-form-item>
+            </el-form>
+        </div>
+        <span slot="footer" class="dialog-footer">
+            <el-button  type='success' size='small'>确定</el-button>
+            <el-button  type='danger' size='small' @click='searchClose'>关闭</el-button>
+        </span>
+        </el-dialog>
         <el-card class="box-card">
             <el-row class="height">
                 <el-col :lg='{span:16}' :sm='{span:24}' style="marginTop:5px" class="height">
@@ -17,7 +60,7 @@
                         <el-col :span='24' style="marginTop:5px">
                             <el-input  placeholder='输入设备编号 / 提取人 搜索记录' >
                                 <el-button slot="append" icon="el-icon-search" id='searchBtn' type='primary'>搜索</el-button>
-                                <el-button slot="append" icon="el-icon-setting" type='info' >高级搜索</el-button>
+                                <el-button slot="append" icon="el-icon-setting" type='info' @click='logBestSearchBtn'>高级搜索</el-button>
                             </el-input>
                         </el-col>
                     </el-row>
@@ -96,7 +139,7 @@
     </div>
 </template>
 <script>
-import {Card, Table, TableColumn, Pagination, Dialog, Select, Option, Progress} from 'element-ui'
+import {Card, Table, TableColumn, Pagination, Dialog, Select, Option, Progress, Form, FormItem, DatePicker} from 'element-ui'
 export default {
   name: 'retrievalRecord',
   data () {
@@ -140,6 +183,33 @@ export default {
               terminalNum: '1319398b481853285b93d06d836ab05f',
               remark: '',
               state: '提取失败'
+          }],
+          bestSearchShow: false,
+          logStateVal: '',
+          logDateVal: '',
+          options: [{
+          value: '记录生成',
+          label: '记录生成'
+          },
+          {
+          value: '命令已下发',
+          label: '命令已下发'
+          },
+          {
+          value: '终端已接受命令',
+          label: '终端已接受命令'
+          },
+          {
+          value: '执行成功',
+          label: '执行成功'
+          },
+          {
+          value: 'WEB参数错误',
+          label: 'WEB参数错误'
+          },
+          {
+          value: '执行失败',
+          label: '执行失败'
           }]
       }
   },
@@ -151,8 +221,19 @@ export default {
       elDialog: Dialog,
       elSelect: Select,
       elOption: Option,
-      elProgress: Progress
+      elProgress: Progress,
+      elForm: Form,
+      elFormItem: FormItem,
+      elDatePicker: DatePicker
   },
+  methods: {
+      logBestSearchBtn () {
+          this.bestSearchShow = true;
+      },
+      searchClose () {
+          this.bestSearchShow = false
+      }
+  }
 }
 </script>
 <style>
