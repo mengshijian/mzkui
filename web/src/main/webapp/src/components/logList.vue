@@ -89,6 +89,53 @@
         </span>
         </el-dialog>
          <!-- 提取日志 面板 -->
+         <el-dialog
+        :visible="bestSearchShow"
+        append-to-body
+        width="40%"
+        :before-close='searchClose'
+        >
+        <el-row slot="title" align='middle'>
+            高级查询
+        </el-row>
+        <div >
+            <el-form  status-icon  ref="ruleForm2" label-width="110px" class="demo-ruleForm">
+            <el-form-item label="MID：" >
+                <el-input type="text"  auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="型号：">
+                <el-input type="text"  auto-complete="off"></el-input>
+            </el-form-item>
+             <el-form-item label="IMEI：">
+                <el-input type="text"  auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="终端类型：">
+                <el-select v-model="logSortVal" placeholder="Trace级别" size='small' style="marginTop:-5px">
+                    <el-option
+                    v-for="item in options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="登录时间：" >
+                 <el-date-picker
+                v-model="dateVal"
+                type="datetimerange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期">
+                </el-date-picker>
+            </el-form-item>
+            </el-form>
+        </div>
+        <span slot="footer" class="dialog-footer">
+            <el-button  type='success' size='small'>确定</el-button>
+            <el-button  type='danger' size='small' @click='searchClose'>关闭</el-button>
+        </span>
+        </el-dialog>
+          <!-- 高级搜索 面板 -->
         <el-card class="box-card">
             <el-row class="height">
                 <el-col :lg='{span:16}' :sm='{span:24}' style="marginTop:5px" class="height">
@@ -116,7 +163,7 @@
                         <el-col :span='24' style="marginTop:5px">
                             <el-input  placeholder='输入Mac / IMEI / UID 搜索用户' >
                                 <el-button slot="append" icon="el-icon-search" id='searchBtn' type='primary'>搜索</el-button>
-                                <el-button slot="append" icon="el-icon-setting" type='info' >高级搜索</el-button>
+                                <el-button slot="append" icon="el-icon-setting" type='info' @click='bestSearchBtn'>高级搜索</el-button>
                             </el-input>
                         </el-col>
                     </el-row>
@@ -169,10 +216,20 @@
                 width="300">
                 </el-table-column>
                 <el-table-column
-                prop="state"
                 label="状态"
                 align='center'
-                width="120">
+                width="180">
+                    <template slot-scope="scope">
+                        <el-switch
+                            disabled
+                            style="display: block"
+                            v-model="scope.row.state"
+                            active-color="#13ce66"
+                            inactive-color="#ff4949"
+                            active-text="登录"
+                            inactive-text="离线">
+                        </el-switch>
+                    </template>
                 </el-table-column>
                 <el-table-column
                     prop="date"
@@ -220,7 +277,7 @@ export default {
           MID: '!1671430928',
           Mac: 200333,
           IMEI: 456110210036376,
-          state: 'Login',
+          state: false,
           date: '2016-05-03'
         }, {
           termtyp: 'PC',
@@ -229,7 +286,7 @@ export default {
           MID: '!1671430928',
           Mac: 200333,
           IMEI: 456110210036376,
-          state: 'Login',
+          state: true,
           date: '2016-05-03'
         }, {
           termtyp: 'PC',
@@ -238,7 +295,7 @@ export default {
           MID: '!1671430928',
           Mac: 200333,
           IMEI: 456110210036376,
-          state: 'Login',
+          state: false,
           date: '2016-05-03'
         }, {
          termtyp: 'PC',
@@ -247,7 +304,7 @@ export default {
           MID: '!1671430928',
           Mac: 200333,
           IMEI: 456110210036376,
-          state: 'Login',
+          state: true,
           date: '2016-05-03'
         }, {
          termtyp: 'PC',
@@ -256,7 +313,7 @@ export default {
           MID: '!1671430928',
           Mac: 200333,
           IMEI: 456110210036376,
-          state: 'Login',
+          state: true,
           date: '2016-05-03'
         }, {
           termtyp: 'PC',
@@ -265,7 +322,7 @@ export default {
           MID: '!1671430928',
           Mac: 200333,
           IMEI: 456110210036376,
-          state: 'Login',
+          state: true,
           date: '2016-05-03'
         }, {
           termtyp: 'PC',
@@ -274,7 +331,7 @@ export default {
           MID: '!1671430928',
           Mac: 200333,
           IMEI: 456110210036376,
-          state: 'Login',
+          state: false,
           date: '2016-05-03'
         }],
         traceShow: false,
@@ -282,6 +339,7 @@ export default {
         traceVal: 'DEBUG',
         logSortVal: 'DEBUG',
         LogShow: false,
+        bestSearchShow: false,
         SwitchState: true,
         dateVal: '',
         options: [{
@@ -348,9 +406,11 @@ export default {
       LogClose () {
           this.LogShow = false
       },
-      recodLog () {
-          this.$message.success('正在提取');
-          this.$router.push('/record')
+      bestSearchBtn () {
+          this.bestSearchShow = true;
+      },
+      searchClose () {
+          this.bestSearchShow = false
       }
   }
 }
