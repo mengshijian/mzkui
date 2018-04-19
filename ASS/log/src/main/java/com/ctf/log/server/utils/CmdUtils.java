@@ -6,7 +6,7 @@ import com.ctf.log4droid.mt_body.Server2Term;
 import com.ctf.log4droid.mt_body.ServerRsp;
 import com.ctf.log4droid.mt_body.Term2Server;
 import com.ctf.log4droid.mt_body.TermReq;
-import com.ctf.oss.CCM;
+import com.ctf.log.server.oss.CCM;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;

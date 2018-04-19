@@ -3,7 +3,7 @@ package com.ctf.log.server.netty.proto;
 
 import com.ctf.log.server.utils.LogWrapper;
 import com.ctf.log4droid.mt_body.Server2Term;
-import com.ctf.oss.CCM;
+import com.ctf.log.server.oss.CCM;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.socket.DatagramPacket;

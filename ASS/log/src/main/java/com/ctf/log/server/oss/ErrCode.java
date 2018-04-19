@@ -1,4 +1,4 @@
-package com.ctf.oss;
+package com.ctf.log.server.oss;
 
 public class ErrCode {
     public static final String PROTO_MD5 = "47c0d5b575340b83051fb50db032c5fb";

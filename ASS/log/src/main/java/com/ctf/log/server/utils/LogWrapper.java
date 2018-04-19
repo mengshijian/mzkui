@@ -1,6 +1,6 @@
 package com.ctf.log.server.utils;
 
-import com.ctf.oss.CCM;
+import com.ctf.log.server.oss.CCM;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -67,8 +67,8 @@ public class LogWrapper {
         if (null!=sessionId && sessionId.length>0) {
             clientInfo = CCM.getUserId(sessionId);
         }
-
         InetSocketAddress clientIp = sender!=null ? sender:CCM.getCmdBySid(sessionId).getSender();
+
 
         return "[" + clientInfo + "@" + clientIp + "]";
     }
@@ -135,5 +135,9 @@ public class LogWrapper {
 
     public void fatal(InetSocketAddress sender, String s) {
         logger.fatal(getClientInfo(null,sender) + s);
+    }
+
+    public void debug(byte[] sessionId,InetSocketAddress sender, String s) {
+        logger.debug(getClientInfo(sessionId,sender) + s);
     }
 }

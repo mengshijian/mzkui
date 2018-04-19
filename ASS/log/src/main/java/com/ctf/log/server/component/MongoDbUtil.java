@@ -3,7 +3,7 @@ package com.ctf.log.server.component;
 import com.ctf.log.server.pojo.OnLineUser;
 import com.ctf.log.server.pojo.User;
 import com.ctf.log.server.utils.LogWrapper;
-import com.ctf.oss.CCM;
+import com.ctf.log.server.oss.CCM;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;

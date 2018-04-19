@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configureation statu="OFF">
     <properties>
-        <property name="logdir">logs</property>
+        <property name="logdir">slogs</property>
     </properties>
     <appenders>
         <!-- 输出到控制台 -->

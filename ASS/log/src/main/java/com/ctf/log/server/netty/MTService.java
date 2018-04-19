@@ -5,7 +5,7 @@ import com.ctf.log.server.component.MongoDbUtil;
 import com.ctf.log.server.pojo.OnLineUser;
 import com.ctf.log.server.utils.LogWrapper;
 import com.ctf.log4droid.mt_body.*;
-import com.ctf.oss.CCM;
+import com.ctf.log.server.oss.CCM;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

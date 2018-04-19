@@ -1,4 +1,4 @@
-package com.ctf.oss;
+package com.ctf.log.server.oss;
 
 import com.ctf.log.server.component.MongoDbUtil;
 import com.ctf.log4droid.mt_body.LogConfig;
