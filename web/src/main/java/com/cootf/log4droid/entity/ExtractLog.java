@@ -10,4 +10,5 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class ExtractLog extends BaseEntity {
 
 
+    private static final long serialVersionUID = 2501795693279216172L;
 }
