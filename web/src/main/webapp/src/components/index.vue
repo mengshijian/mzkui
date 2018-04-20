@@ -3,8 +3,9 @@
         <el-container>
         <el-header>
           <el-row>
-              <el-col :xs="6" :sm='4' style="color:white">
-                Log4droid
+              <el-col :xs="6" :sm='4' style="color:white" >
+                  <img src="../../static/yaxia_Logo1.png"  style="width:60px;height:60px">
+                  <span style="verticalAlign:text-bottom">Log4droid</span>
               </el-col>
               <el-col  :xs='{span:4, offset:14}' :sm="{span:2, offset:18}" >
                  <el-dropdown trigger="hover">
@@ -26,6 +27,7 @@
             <el-col class="hello" :lg='3' :sm="2" :xs="4">
               <el-aside width='100%'>
                 <el-menu
+                  mode='vertical'
                   :default-active="$route.name"
                   class="el-menu-vertical-demo"
                   background-color="#333c45"
@@ -33,21 +35,22 @@
                   active-text-color="#ffd04b"
                   router
                   style="height:100%;width:100%"
+                  :collapse='isCollapse'
                   >
-                  <!-- <el-submenu index="loglist">
-                    <template slot="title">
-                      <i class="el-icon-loading"></i>
-                      <span>终端管理</span>
-                    </template> -->
-                    <!-- <el-menu-item-group> -->
-                      <el-menu-item index="loglist">
-                          <i class="el-icon-document"></i>用户列表
-                          </el-menu-item>
-                      <el-menu-item index="record">
-                           <i class="el-icon-sort"></i>提取记录
+                    <el-submenu index="loglist">
+                        <template slot="title">
+                            <i class="el-icon-sort"></i>
+                            <span>日志系统</span>
+                        </template>
+                        <el-menu-item-group>
+                            <el-menu-item index="loglist">
+                                <i class="el-icon-document"></i>用户列表
+                                </el-menu-item>
+                            <el-menu-item index="record">
+                                <i class="el-icon-sort"></i>提取记录
                            </el-menu-item>
-                    <!-- </el-menu-item-group> -->
-                  <!-- </el-submenu> -->
+                        </el-menu-item-group>
+                    </el-submenu >
                 </el-menu>
               </el-aside>
               <!-- 侧边栏 -->
@@ -66,6 +69,11 @@
 import {Container, Header, Main, Dropdown, DropdownMenu, DropdownItem, Aside, Submenu, MenuItem, Menu,  MenuItemGroup} from 'element-ui'
 export default {
   name: 'index',
+  data () {
+      return {
+          isCollapse: false
+      }
+  },
   components: {
       elContainer: Container,
       elHeader: Header,
@@ -83,6 +91,21 @@ export default {
       logout () {
           this.$message.success('退出成功')
     }
+  },
+  mounted () {
+      var windowWidth = window.innerWidth;
+      var windowHeight = window.innerHeight;
+      windowWidth < 1200 || windowHeight < 760 ? this.isCollapse = true : this.isCollapse = false
+      window.addEventListener('resize', () => {
+          windowWidth = window.innerWidth;
+          windowHeight = window.innerHeight;
+          if (windowWidth < 1200 || windowHeight < 760) {
+              this.isCollapse = true
+          } else{
+              this.isCollapse = false
+          }
+          console.log(windowWidth,windowHeight,this.isCollapse); 
+      }, true)
   }
 }
 </script>
@@ -93,6 +116,9 @@ export default {
 }
 .height {
     height:100%
+}
+.width {
+    width: 100%
 }
 .box-card #searchBtn {
     border-color: #dcdfe6;
@@ -150,6 +176,10 @@ export default {
 .el-menu-item.is-active {
     background: rgb(77, 174, 165) !important;
     color: white !important;
+}
+.stateSelect {
+    margin-top:-5px;
+    width:100%
 }
 .el-aside {
 color: #333;

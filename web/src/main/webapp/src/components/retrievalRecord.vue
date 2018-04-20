@@ -18,7 +18,7 @@
                 <el-input type="text"  auto-complete="off"></el-input>
             </el-form-item>
             <el-form-item label="状态：">
-                <el-select v-model="logStateVal" placeholder="状态类别" size='small' style="marginTop:-5px">
+                <el-select v-model="logStateVal" placeholder="状态类别" class="stateSelect">
                     <el-option
                     v-for="item in options"
                     :key="item.value"
@@ -30,6 +30,7 @@
             <el-form-item label="日期：" >
                  <el-date-picker
                 v-model="logDateVal"
+                style="width:100%"
                 type="datetimerange"
                 range-separator="至"
                 start-placeholder="开始日期"
@@ -109,11 +110,11 @@
                 >
                     <template slot-scope="scope">
                         <span>{{scope.row.state}}</span>
-                        <el-progress :text-inside="true" :stroke-width="18" :percentage="70" v-show='scope.row.state=== "正在提取"'></el-progress>
-                        <el-progress :text-inside="true" :stroke-width="18" :percentage="50" v-show='scope.row.state=== "命令已下发"'></el-progress>
-                        <el-progress :text-inside="true" :stroke-width="18" :percentage="25" v-show='scope.row.state=== "记录生成"'></el-progress>
-                        <el-progress :text-inside="true" :stroke-width="18" :percentage="100" v-show='scope.row.state=== "提取成功"' status="success"></el-progress>
-                        <el-progress :text-inside="true" :stroke-width="18" :percentage="100" v-show='scope.row.state=== "提取失败"' status="exception"></el-progress>
+                        <el-progress :text-inside="true" :stroke-width="18" :percentage="70" v-if='scope.row.state=== "正在提取"'></el-progress>
+                        <el-progress :text-inside="true" :stroke-width="18" :percentage="50" v-if='scope.row.state=== "命令已下发"'></el-progress>
+                        <el-progress :text-inside="true" :stroke-width="18" :percentage="25" v-if='scope.row.state=== "记录生成"'></el-progress>
+                        <el-progress :text-inside="true" :stroke-width="18" :percentage="100" v-if='scope.row.state=== "提取成功"' status="success"></el-progress>
+                        <el-progress :text-inside="true" :stroke-width="18" :percentage="100" v-if='scope.row.state=== "提取失败"' status="exception"></el-progress>
                     </template>
                 </el-table-column>
                 <el-table-column
