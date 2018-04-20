@@ -7,5 +7,6 @@ import java.io.Serializable;
  */
 public class BaseEntity implements Serializable {
 
+    private static final long serialVersionUID = 1680007539936068051L;
     private String id;
 }

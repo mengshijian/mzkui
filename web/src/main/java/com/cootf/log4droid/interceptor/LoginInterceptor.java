@@ -1,8 +1,16 @@
 package com.cootf.log4droid.interceptor;
 
+import com.alibaba.fastjson.JSONObject;
+import com.cootf.log4droid.common.consts.Constant;
+import com.cootf.log4droid.common.utils.JwtUtils;
+import com.cootf.log4droid.entity.UserInfo;
+import io.jsonwebtoken.Claims;
+import java.net.URLDecoder;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -47,13 +55,48 @@ public class LoginInterceptor implements HandlerInterceptor {
                 .getServerPort();
         HttpSession session = request.getSession();
         logger.info(loginUrl + request.getRequestURI());
-        Object obj = session.getAttribute("");
-        if (obj == null) {
-            response.setStatus(401);
-            return false;
-        } else {
-            //用户在其他微信上登录，则要求用户重新登录
+        Cookie[] cookies = request.getCookies();
+        //如果浏览器中存在Cookie
+        String token = null;
+        if (cookies != null && cookies.length > 0) {
+            //遍历所有Cookie
+            for (Cookie cookie : cookies) {
+                //找到name为city的Cookie
+                if (cookie.getName().equals("token")) {
+                    //使用URLDecode.decode()解码,防止中文乱码
+                    token = URLDecoder.decode(cookie.getValue(), "utf-8");
+                }
+            }
         }
-        return true;
+        UserInfo user = null;
+        if (StringUtils.isNotBlank(token)) {
+            Claims claims = JwtUtils.parseJWT(token);
+            if (claims.getIssuer() != Constant.JWT_ISSUER) {
+                logger.debug("token无效");
+                response.setStatus(401);
+                return false;
+            }
+            String subject = null;
+            try {
+                subject = claims.getSubject();
+            } catch (Exception ex) {
+                //token已过期
+                logger.debug("用户token会话已过期");
+                response.setStatus(405);
+                return false;
+            }
+            JSONObject json = (JSONObject) JSONObject.parse(claims.getSubject());
+            user = json.toJavaObject(UserInfo.class);
+            //如果用户信息存在，则放行
+            if (user != null && StringUtils.isNotBlank(user.getUserName()) && StringUtils
+                    .isNotBlank(user.getPassword())) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            response.setStatus(405);
+            return false;
+        }
     }
 }
