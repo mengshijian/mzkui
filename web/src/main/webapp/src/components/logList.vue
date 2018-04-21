@@ -158,7 +158,7 @@
 " size='small'>未登录</el-button>
                             </el-button-group>
                         </el-col>
-                        <el-col :sm='{span:16}' :xs='{span:24}'>
+                        <el-col :sm='{span:16}' :xs='{span:24}' >
                             <el-button-group >
                                 <el-button type="primary" round icon="el-icon-edit" size='small'>PC端</el-button>
                                 <el-button type="primary" icon="el-icon-tickets
@@ -169,7 +169,7 @@
                         </el-col>
                     </el-row>    
                 </el-col>
-                <el-col :lg='{span:8}' :sm='{span:12}' >
+                <el-col :lg='{span:8}' :sm='{span:24}' >
                     <el-row >
                         <el-col :span='24' style="marginTop:5px">
                             <el-input  placeholder='输入Mac / IMEI / UID 搜索用户' >
@@ -186,6 +186,7 @@
                 <el-table
                 :data="tableData4"
                 border
+                size='small'
                 stripe
                 id="LogListTable"
                 >
@@ -227,7 +228,7 @@
                 width="300">
                 </el-table-column>
                 <el-table-column
-                label="状态"
+                label="状态(未登录 / 登录)"
                 align='center'
                 width="180">
                     <template slot-scope="scope">
@@ -236,9 +237,8 @@
                             style="display: block"
                             v-model="scope.row.state"
                             active-color="#13ce66"
-                            inactive-color="#ff4949"
-                            active-text="登录"
-                            inactive-text="离线">
+                            inactive-color="ff4949"
+                            >
                         </el-switch>
                     </template>
                 </el-table-column>

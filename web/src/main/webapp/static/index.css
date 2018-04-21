@@ -1,0 +1,77 @@
+.box-card .el-card__body{
+    padding: 10px;
+    height: 100%;
+}
+.height {
+    height:100%
+}
+.width {
+    width: 100%
+}
+.box-card #searchBtn {
+    border-color: #dcdfe6;
+    border-left: none;
+    background: #409EFF;
+    color:white;
+    border-radius: 0px;
+}
+#LogListTable {
+    width: 100%;
+    height: 635px;
+    margin-top: 1%;
+    border-radius: 5px;
+}
+#LogListTable .el-table__body-wrapper {
+    height: 92%;
+}
+.page span{
+    color: white
+}
+.page {
+    margin-top: 30px;
+}
+.page .btn-prev {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+.page .btn-next {
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+.traceDialog {
+    border: 1px solid lightgray;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px 0 rgba(255,255,255,.5)
+}
+.traceDialog .el-dialog__header {
+    border-bottom: 1px solid lightgray
+}
+.dialog-body {
+    min-height: 650px;
+    overflow: auto;
+    background: #1e282c;
+    color: white
+}
+.el-header, .el-footer {
+    background-color: #2c373b;
+    color: white;
+    text-align: center;
+    line-height: 60px;
+    padding: 0px
+  }
+.el-container,.hello,.el-main,.el-aside{
+    height: 100%
+}
+.el-menu-item.is-active {
+    background: rgb(77, 174, 165) !important;
+    color: white !important;
+}
+.stateSelect {
+    margin-top:-5px;
+    width:100%
+}
+.el-aside {
+color: #333;
+text-align: center;
+overflow: hidden;
+}
