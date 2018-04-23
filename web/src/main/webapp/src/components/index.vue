@@ -3,9 +3,8 @@
         <el-container>
         <el-header>
           <el-row>
-              <el-col :xs="6" :sm='4' style="color:white" >
-                  <img src="../../static/yaxia_Logo1.png"  style="width:60px;height:60px">
-                  <span style="verticalAlign:text-bottom">Log4droid</span>
+              <el-col :xs="6" :sm='4' >
+                  <img src="../../static/Log4Droid__logo.png"  style="height:40px;float:left;margin:10px 40px" title="Log4Droid">
               </el-col>
               <el-col  :xs='{span:4, offset:14}' :sm="{span:2, offset:18}" >
                  <el-dropdown trigger="hover">

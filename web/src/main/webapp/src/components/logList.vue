@@ -158,7 +158,7 @@
 " size='small'>未登录</el-button>
                             </el-button-group>
                         </el-col>
-                        <el-col :sm='{span:16}' :xs='{span:24}' >
+                        <el-col :sm='{span:16, push:3}' :xs='{span:24}' >
                             <el-button-group >
                                 <el-button type="primary" round icon="el-icon-edit" size='small'>PC端</el-button>
                                 <el-button type="primary" icon="el-icon-tickets
@@ -251,7 +251,7 @@
                     width="200">
                 </el-table-column>
                 <el-table-column
-                    fixed="right"
+                    :fixed="traceFix"
                     label="操作"
                     align='center'
                     width="250">
@@ -353,6 +353,7 @@ export default {
         logSortVal: 'DEBUG',
         LogShow: false,
         bestSearchShow: false,
+        traceFix: 'right',
         SwitchState: true,
         dateVal: '',
         options: [{
@@ -424,13 +425,22 @@ export default {
       },
       searchClose () {
           this.bestSearchShow = false
-      }
+      },
+      tableResize() {
+          let tableWidth = document.getElementById('LogListTable').clientWidth;
+          this.tableHeight = document.getElementsByClassName('el-main')[0].clientHeight - document.getElementsByClassName('box-card')[0].clientHeight - 115;
+          if (tableWidth < 600 ) {
+              this.traceFix = !this.traceFix;
+          }
+            window.addEventListener('resize', () => {
+                this.tableHeight = document.getElementsByClassName('el-main')[0].clientHeight - document.getElementsByClassName('box-card')[0].clientHeight - 115;
+                tableWidth = document.getElementById('LogListTable').clientWidth;
+                tableWidth < 600 ? this.traceFix = '' : this.traceFix = "right"
+            })
+      } // 屏幕自适应事件
   },
   mounted () {
-      this.tableHeight = document.getElementsByClassName('el-main')[0].clientHeight - document.getElementsByClassName('box-card')[0].clientHeight - 115;
-      window.addEventListener('resize', () => {
-          this.tableHeight = document.getElementsByClassName('el-main')[0].clientHeight - document.getElementsByClassName('box-card')[0].clientHeight - 115;
-      })
+      this.tableResize();
   }
 }
 </script>

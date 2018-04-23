@@ -235,13 +235,16 @@ export default {
       },
       searchClose () {
           this.bestSearchShow = false
+      },
+      tableResize () {
+           this.tableHeight = document.getElementsByClassName('el-main')[0].clientHeight - document.getElementsByClassName('box-card')[0].clientHeight - 115;
+            window.addEventListener('resize', () => {
+                this.tableHeight = document.getElementsByClassName('el-main')[0].clientHeight - document.getElementsByClassName('box-card')[0].clientHeight - 115;
+            })
       }
   },
   mounted () {
-      this.tableHeight = document.getElementsByClassName('el-main')[0].clientHeight - document.getElementsByClassName('box-card')[0].clientHeight - 115;
-      window.addEventListener('resize', () => {
-          this.tableHeight = document.getElementsByClassName('el-main')[0].clientHeight - document.getElementsByClassName('box-card')[0].clientHeight - 115;
-      })
+     this.tableResize();
   }
 }
 </script>
