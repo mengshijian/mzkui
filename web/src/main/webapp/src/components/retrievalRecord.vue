@@ -75,6 +75,7 @@
                 border
                 stripe
                 id="LogListTable"
+                :height='tableHeight + "px"'
                 >
                 <el-table-column
                 prop="recordName"
@@ -188,6 +189,7 @@ export default {
           bestSearchShow: false,
           logStateVal: '',
           logDateVal: '',
+          tableHeight: '',
           options: [{
           value: '记录生成',
           label: '记录生成'
@@ -234,6 +236,12 @@ export default {
       searchClose () {
           this.bestSearchShow = false
       }
+  },
+  mounted () {
+      this.tableHeight = document.getElementsByClassName('el-main')[0].clientHeight - document.getElementsByClassName('box-card')[0].clientHeight - 115;
+      window.addEventListener('resize', () => {
+          this.tableHeight = document.getElementsByClassName('el-main')[0].clientHeight - document.getElementsByClassName('box-card')[0].clientHeight - 115;
+      })
   }
 }
 </script>

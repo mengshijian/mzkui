@@ -104,7 +104,6 @@ export default {
           } else{
               this.isCollapse = false
           }
-          console.log(windowWidth,windowHeight,this.isCollapse); 
       }, true)
   }
 }

@@ -189,6 +189,7 @@
                 size='small'
                 stripe
                 id="LogListTable"
+                :height='tableHeight + "px"'
                 >
                 <el-table-column
                 prop="termtyp"
@@ -345,6 +346,7 @@ export default {
           state: false,
           date: '2016-05-03'
         }],
+        tableHeight: '',
         traceShow: false,
         tracedata: '',
         traceVal: 'DEBUG',
@@ -423,6 +425,12 @@ export default {
       searchClose () {
           this.bestSearchShow = false
       }
+  },
+  mounted () {
+      this.tableHeight = document.getElementsByClassName('el-main')[0].clientHeight - document.getElementsByClassName('box-card')[0].clientHeight - 115;
+      window.addEventListener('resize', () => {
+          this.tableHeight = document.getElementsByClassName('el-main')[0].clientHeight - document.getElementsByClassName('box-card')[0].clientHeight - 115;
+      })
   }
 }
 </script>
