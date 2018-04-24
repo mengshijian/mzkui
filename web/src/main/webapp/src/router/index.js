@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-
+import Cookie from 'vue-cookie'
 Vue.use(Router)
+Vue.use(Cookie)
 
 export const router = new Router({
   routes: [
@@ -30,3 +31,11 @@ export const router = new Router({
     }
   ]
 })
+router.beforeEach((to, from, next) => {
+    let tokens = Cookie.get('token');
+    if (tokens) {
+      next();
+    } else {
+      to.path === '/login' ? next() : next('/login')
+    }
+}); 

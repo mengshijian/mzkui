@@ -41,7 +41,21 @@
             {{tracedata}}
         </div>
         <span slot="footer" class="dialog-footer">
-            <el-button @click="closeTrace" type='warning'>关闭</el-button>
+            <el-row>
+                <el-col :span='12'>
+                    <el-row>
+                        <el-col :span='12'>
+                            <el-input placeholder='请输入命令' v-model="cmdVal"></el-input>
+                        </el-col>
+                        <el-col :span='4'>
+                            <el-button  type='primary' @click="submitCmd">确认</el-button>
+                        </el-col>
+                    </el-row>
+                </el-col>
+                <el-col :span='4' style="float:right">
+                    <el-button @click="closeTrace" type='warning'>关闭</el-button>
+                </el-col>
+            </el-row>
         </span>
         </el-dialog>
         <!-- trace 面板 -->
@@ -56,8 +70,8 @@
         </el-row>
         <div >
             <el-form  status-icon  ref="ruleForm2" label-width="110px" class="demo-ruleForm">
-            <el-form-item label="用户名：" >
-                <el-input type="text"  auto-complete="off" v-model="tracedata.UID" disabled></el-input>
+            <el-form-item label="设备编号：" >
+                <el-input type="text"  auto-complete="off" v-model="tracedata.IMEI" disabled></el-input>
             </el-form-item>
             <el-form-item label="提取流量上限：">
                 <el-row>
@@ -151,15 +165,15 @@
             <el-row class="height">
                 <el-col :lg='{span:16}' :sm='{span:24}' style="marginTop:5px" class="height">
                     <el-row>
-                        <el-col :sm='{span:8}' :xs='{span:24}'>
-                            <el-button-group >
+                        <el-col :sm='{span:8}' :xs='{span:24}' >
+                            <el-button-group @click.native='userListCardBtnGruop($event)' class="loginBtns">
                                 <el-button type="primary" round icon="el-icon-location" size='small'>已登录</el-button>
                                 <el-button type="danger" round icon="el-icon-location-outline
 " size='small'>未登录</el-button>
                             </el-button-group>
                         </el-col>
                         <el-col :sm='{span:16, push:3}' :xs='{span:24}' >
-                            <el-button-group >
+                            <el-button-group @click.native='userListCardBtnGruop($event)' >
                                 <el-button type="primary" round icon="el-icon-edit" size='small'>PC端</el-button>
                                 <el-button type="primary" icon="el-icon-tickets
 " size='small'>平板</el-button>
@@ -190,6 +204,7 @@
                 stripe
                 id="LogListTable"
                 :height='tableHeight + "px"'
+                @row-click='test'
                 >
                 <el-table-column
                 prop="termtyp"
@@ -225,6 +240,8 @@
                 <el-table-column
                 prop="IMEI"
                 label="IMEI"
+                class-name='imeiClass'
+                v-popover:popover4
                 align='center'
                 width="300">
                 </el-table-column>
@@ -274,10 +291,16 @@
                 </el-pagination>
             </el-col>
         </el-row>
+        <el-popover
+            ref="popover4"
+            placement="right"
+            width="400"
+            trigger="click" content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。">
+        </el-popover>
     </div>
 </template>
 <script>
-import {Card, Table, TableColumn, Pagination, Dialog, Select, Option, Switch, Form, FormItem, DatePicker} from 'element-ui'
+import {Card, Table, TableColumn, Pagination, Dialog, Select, Option, Switch, Form, FormItem, DatePicker, Popover} from 'element-ui'
 export default {
   name: 'logList',
   data () {
@@ -350,6 +373,7 @@ export default {
         traceShow: false,
         tracedata: '',
         traceVal: 'DEBUG',
+        cmdVal: '',
         logSortVal: 'DEBUG',
         LogShow: false,
         bestSearchShow: false,
@@ -397,23 +421,24 @@ export default {
       elSwitch: Switch,
       elForm: Form,
       elFormItem: FormItem,
-      elDatePicker: DatePicker
+      elDatePicker: DatePicker,
+      elPopover: Popover
   },
   methods: {
-      test () {
-          alert(1111111111)
-      },
       recordTrace (data) {
           this.tracedata = '';
           this.traceShow = true;
           this.tracedata = data;
-      },
+          this.$post('/trace/list').then(res => {
+              console.log(res)
+          })
+      }, // 打开trace
       OpenLogSection (data) {
           this.tracedata = '';
           this.dateVal = '';
           this.LogShow = true;
           this.tracedata = data;
-      },
+      }, // 提取日志
       closeTrace () {
           this.traceShow = false;
       },
@@ -422,10 +447,17 @@ export default {
       },
       bestSearchBtn () {
           this.bestSearchShow = true;
-      },
+      }, // 高级搜索
       searchClose () {
           this.bestSearchShow = false
-      },
+      }, // 高级搜索关闭
+      submitCmd () {
+          this.$post('/trace/save', {
+              id: this.tracedata.UID
+          }).then(res => {
+              console.log(res.data)
+          })
+      }, // 命令提交
       tableResize() {
           let tableWidth = document.getElementById('LogListTable').clientWidth;
           this.tableHeight = document.getElementsByClassName('el-main')[0].clientHeight - document.getElementsByClassName('box-card')[0].clientHeight - 115;
@@ -437,7 +469,48 @@ export default {
                 tableWidth = document.getElementById('LogListTable').clientWidth;
                 tableWidth < 600 ? this.traceFix = '' : this.traceFix = "right"
             })
-      } // 屏幕自适应事件
+      }, // 屏幕自适应事件
+      test(row, event, column) {
+          if (column.label === 'IMEI') {
+              console.log(row.IMEI)
+          }
+      }, // IMEI显示
+      userListCardBtnGruop(el) {
+          let target = el.target; // 获取点击源
+          switch (target.tagName) {
+              case 'BUTTON':
+                  target = target.lastChild;
+                  break;
+              case 'I':
+                  target = target.nextElementSibling;
+                  break;
+          }
+          if (target.parentNode.parentNode.classList.contains('loginBtns')) {
+                if(!target.classList.contains('click_active')) {
+                        target.classList.add('click_active');
+                        let targets = target.parentNode.parentNode.children
+                        for (var i = 0, l = targets.length; i < l; i++) {
+                            if (targets[i].lastChild.innerText !== target.innerText) {
+                                targets[i].lastChild.classList.remove('click_active');
+                            }
+                        }
+                }else {
+                    target.classList.remove('click_active');
+                }
+          } else {
+                if(!target.classList.contains('click_active')) {
+                        target.classList.add('click_active'); // 未选中添加选中状态并获取特定条件的数据
+                        let targets = target.parentNode.parentNode.children
+                        for (var i = 0, l = targets.length; i < l; i++) {
+                            if (targets[i].lastChild.innerText !== target.innerText) {
+                                targets[i].lastChild.classList.remove('click_active');
+                            }
+                        }
+                }else {
+                    target.classList.remove('click_active'); // 节点源已选中的情况下删除选中状态，重置数据
+                }
+          }
+      }
   },
   mounted () {
       this.tableResize();
@@ -445,5 +518,8 @@ export default {
 }
 </script>
 <style>
-
+.imeiClass:hover {
+    color: blue;
+    cursor: pointer;
+}
 </style>

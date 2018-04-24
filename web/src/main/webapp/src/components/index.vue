@@ -12,9 +12,9 @@
                       ctf<i class="el-icon-arrow-down el-icon--right"></i>
                     </span>
                     <el-dropdown-menu slot="dropdown" >
-                      <el-dropdown-item>我的消息</el-dropdown-item>
-                      <el-dropdown-item>设置</el-dropdown-item>
-                      <el-dropdown-item divided @click.native.prevent="logout">退出</el-dropdown-item>
+                      <!-- <el-dropdown-item>我的消息</el-dropdown-item>
+                      <el-dropdown-item>设置</el-dropdown-item> -->
+                      <el-dropdown-item  @click.native.prevent="logout">退出</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
               </el-col>
@@ -88,7 +88,10 @@ export default {
   },
   methods: {
       logout () {
-          this.$message.success('退出成功')
+          this.$cookie.delete('token');
+          this.$cookie.delete('userName');
+          this.$router.push('/login');
+          this.$message.success('退出成功');
     }
   },
   mounted () {

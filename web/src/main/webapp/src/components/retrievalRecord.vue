@@ -47,11 +47,11 @@
         <el-card class="box-card">
             <el-row class="height">
                 <el-col :lg='{span:16}' :sm='{span:24}' style="marginTop:5px" class="height">
-                            <el-button-group >
+                            <el-button-group @click.native='recordCardBtnGruop($event)' class="btns">
                                 <el-button type="primary" round  size='small'>命令已下发</el-button>
                                 <el-button type="primary" size='small'>正在提取</el-button>
                                 <el-button type="primary"  size='small'>记录生成</el-button>
-                                <el-button  type='warning' size='small'>全部记录</el-button>
+                                <!-- <el-button  type='warning' size='small'>全部记录</el-button> -->
                                 <el-button type="success" round  size='small'>提取成功</el-button>
                                 <el-button type="danger" round  size='small'>提取失败</el-button>
                             </el-button-group>  
@@ -84,13 +84,13 @@
                 >
                 </el-table-column>
                 <el-table-column
-                prop="recordAccount"
+                prop="userId"
                 align='center'
                 label="提取账号"
                >
                 </el-table-column>
                 <el-table-column
-                prop="recordDate"
+                prop="createTime"
                 align='center'
                 label="提取时间"
                 sortable
@@ -107,15 +107,22 @@
                 <el-table-column
                 label="状态"
                 prop="state"
+                width='300'
                 align='center'
                 >
                     <template slot-scope="scope">
-                        <span>{{scope.row.state}}</span>
-                        <el-progress :text-inside="true" :stroke-width="18" :percentage="70" v-if='scope.row.state=== "正在提取"'></el-progress>
+                        <span>{{scope.row.status}}</span>
+                        <el-steps :active='scope.row.status' process-status='success' align-center>
+                            <el-step title="记录生成" ></el-step>
+                            <el-step title="命令下发" ></el-step>
+                            <el-step title="提取记录" ></el-step>
+                            <el-step title="提取成功" ></el-step>
+                        </el-steps>
+                        <!-- <el-progress :text-inside="true" :stroke-width="18" :percentage="70" v-if='scope.row.state=== "正在提取"'></el-progress>
                         <el-progress :text-inside="true" :stroke-width="18" :percentage="50" v-if='scope.row.state=== "命令已下发"'></el-progress>
                         <el-progress :text-inside="true" :stroke-width="18" :percentage="25" v-if='scope.row.state=== "记录生成"'></el-progress>
                         <el-progress :text-inside="true" :stroke-width="18" :percentage="100" v-if='scope.row.state=== "提取成功"' status="success"></el-progress>
-                        <el-progress :text-inside="true" :stroke-width="18" :percentage="100" v-if='scope.row.state=== "提取失败"' status="exception"></el-progress>
+                        <el-progress :text-inside="true" :stroke-width="18" :percentage="100" v-if='scope.row.state=== "提取失败"' status="exception"></el-progress> -->
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -141,7 +148,7 @@
     </div>
 </template>
 <script>
-import {Card, Table, TableColumn, Pagination, Dialog, Select, Option, Progress, Form, FormItem, DatePicker} from 'element-ui'
+import {Card, Table, TableColumn, Pagination, Dialog, Select, Option, Progress, Form, FormItem, DatePicker, Steps, Step} from 'element-ui'
 export default {
   name: 'retrievalRecord',
   data () {
@@ -227,7 +234,9 @@ export default {
       elProgress: Progress,
       elForm: Form,
       elFormItem: FormItem,
-      elDatePicker: DatePicker
+      elDatePicker: DatePicker,
+      elSteps: Steps,
+      elStep: Step
   },
   methods: {
       logBestSearchBtn () {
@@ -241,13 +250,39 @@ export default {
             window.addEventListener('resize', () => {
                 this.tableHeight = document.getElementsByClassName('el-main')[0].clientHeight - document.getElementsByClassName('box-card')[0].clientHeight - 115;
             })
-      }
+      },
+      getTableData () {
+          this.$post('/extractLog/list').then(res => {
+              this.tableData4 = res.data.data
+          })
+      },
+      recordCardBtnGruop(el) {
+          let target = el.target; // 获取点击源
+          if (target.tagName === 'BUTTON') {
+               target = target.lastChild;
+          }
+          if(!target.classList.contains('click_active')) {
+                 target.classList.add('click_active'); // 未选中添加选中状态并获取特定条件的数据
+                 let btns = document.getElementsByClassName('btns')[0].getElementsByClassName('el-button') // 获取所有兄弟节点
+                 for (var i = 0, y = btns.length; i < y; i++) {
+                     if (btns[i].lastChild.innerText !== target.innerText) {
+                         btns[i].lastChild.classList.remove('click_active') // 删除其他兄弟节点的选中状态
+                     }
+                 }
+          }else {
+               target.classList.remove('click_active'); // 节点源已选中的情况下删除选中状态，重置数据
+          }
+         
+      } // 筛选按钮
   },
   mounted () {
      this.tableResize();
+     this.getTableData();
   }
 }
 </script>
 <style>
-
+/* .click_active{
+    background: red
+} */
 </style>

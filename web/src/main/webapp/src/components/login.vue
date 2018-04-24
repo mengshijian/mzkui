@@ -54,9 +54,22 @@ export default {
                    const md5 = crypto.createHash('md5');
                     md5.update(this.loginForm.userPwd);
                     this.loginForm.userPwd = md5.digest('hex');
-                    this.$message.success(this.loginForm.userPwd)
+                    this.$post('/user/login', {
+                       userName: this.loginForm.userName,
+                       password: this.loginForm.userPwd
+                    }).then(res => {
+                        if (res.data.code == 0) {
+                            this.$cookie.set('token', res.data.data.token, 1);
+                            this.$cookie.set('userName', this.loginForm.userName, 1);
+                            this.$router.push('/')
+                        }
+                    }).catch(err => {
+                        this.loginForm.userPwd = '';
+                        this.$message.error('登录失败,请检查账号密码是否正确')
+                    })
                 } else {
-                    this.$message.error('请输入账号密码')
+                    this.loginForm.userPwd = '';
+                    this.$message.error('请输入账号密码');
                 }
             })
     }
