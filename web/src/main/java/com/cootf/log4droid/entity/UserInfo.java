@@ -1,5 +1,7 @@
 package com.cootf.log4droid.entity;
 
+import com.cootf.log4droid.base.entity.BaseEntity;
+
 public class UserInfo extends BaseEntity {
 
     /**

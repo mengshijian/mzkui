@@ -1,22 +1,9 @@
-package com.cootf.log4droid.entity;
+package com.cootf.log4droid.controller.qo;
 
-import com.cootf.log4droid.base.entity.BaseEntity;
+import com.cootf.log4droid.base.query.BaseQuery;
 import java.util.Date;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-/**
- * 提取日志命令实体
- */
-@Document(collection = "extractLog")
-public class ExtractLog extends BaseEntity {
-
-
-    private static final long serialVersionUID = 2501795693279216172L;
-
-    /**
-     * 用户id
-     */
-    private String userId;
+public class ExtractLogQuery extends BaseQuery {
 
     /**
      * 提取人名称
@@ -47,19 +34,6 @@ public class ExtractLog extends BaseEntity {
      * 设备编号
      */
     private String deviceId;
-
-    /**
-     * TODO 上传方式 有待确定
-     */
-    private String uploadMethod;
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
 
     public String getExtUserName() {
         return extUserName;
@@ -99,14 +73,6 @@ public class ExtractLog extends BaseEntity {
 
     public void setLogLevel(Integer logLevel) {
         this.logLevel = logLevel;
-    }
-
-    public String getUploadMethod() {
-        return uploadMethod;
-    }
-
-    public void setUploadMethod(String uploadMethod) {
-        this.uploadMethod = uploadMethod;
     }
 
     public String getDeviceId() {

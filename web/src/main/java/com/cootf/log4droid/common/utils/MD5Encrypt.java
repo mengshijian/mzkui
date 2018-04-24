@@ -5,103 +5,60 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-/***/
+/**
+ * MD5加密
+ */
 public class MD5Encrypt {
 
-    /***/
-    public static final String CLEARTEXT_ALGORITHM = "TXT";
+    // 全局数组
+    private final static String[] strDigits = {"0", "1", "2", "3", "4", "5",
+            "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"};
 
-    public static String encryptCheckSum(String str) {
+    public MD5Encrypt() {
+    }
+
+    // 返回形式为数字跟字符串
+    private static String byteToArrayString(byte bByte) {
+        int iRet = bByte;
+        // System.out.println("iRet="+iRet);
+        if (iRet < 0) {
+            iRet += 256;
+        }
+        int iD1 = iRet / 16;
+        int iD2 = iRet % 16;
+        return strDigits[iD1] + strDigits[iD2];
+    }
+
+    // 返回形式只为数字
+    private static String byteToNum(byte bByte) {
+        int iRet = bByte;
+        System.out.println("iRet1=" + iRet);
+        if (iRet < 0) {
+            iRet += 256;
+        }
+        return String.valueOf(iRet);
+    }
+
+    // 转换字节数组为16进制字串
+    private static String byteToString(byte[] bByte) {
+        StringBuffer sBuffer = new StringBuffer();
+        for (int i = 0; i < bByte.length; i++) {
+            sBuffer.append(byteToArrayString(bByte[i]));
+        }
+        return sBuffer.toString();
+    }
+
+    public static String GetMD5Code(String strObj) {
+        String resultString = null;
         try {
+            resultString = new String(strObj);
             MessageDigest md = MessageDigest.getInstance("MD5");
-            byte[] strBytes = str.getBytes("utf-8");
-            md.update(strBytes);
-            byte b[] = md.digest();
-            int i;
-            StringBuffer buf = new StringBuffer("");
-            for (int offset = 0; offset < b.length; offset++) {
-                i = b[offset];
-                if (i < 0) {
-                    i += 256;
-                }
-                if (i < 16) {
-                    buf.append("0");
-                }
-                buf.append(Integer.toHexString(i));
-            }
-            return buf.toString();                     //32位
-
-            //return buf.toString().substring(8,24);   //16位
-
-        } catch (NoSuchAlgorithmException e) {
-            // TODO: handle exception
-
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            // md.digest() 该函数返回值为存放哈希值结果的byte数组
+            resultString = byteToString(md.digest(strObj.getBytes()));
+        } catch (NoSuchAlgorithmException ex) {
+            ex.printStackTrace();
         }
-        return "";
+        return resultString;
     }
-
-    /***************************************************************************
-     * MD5加密方法
-     * @param password
-     * @return
-     */
-    public static String encrypt(String password, int salt) {
-        try {
-            String encodedPwd = calculateDigest(salt, password, "MD5");
-            // because of the encoding bug the password's last character should
-            // be cut out.
-            return encodedPwd.substring(5, encodedPwd.length() - 1);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-
-    }
-
-    /**
-     * Do the actual digest calculation.
-     */
-    private static String calculateDigest(int salt, String password, String algorithm)
-            throws NoSuchAlgorithmException,
-            UnsupportedEncodingException {
-        byte[] bytes;
-
-        if (!CLEARTEXT_ALGORITHM.equals(algorithm)) {
-            // do the hashing
-            MessageDigest md = MessageDigest.getInstance(algorithm);
-            if (salt != 0) {
-                byte[] s = new byte[4];
-                s[0] = (byte) (salt & 0xff);
-                s[1] = (byte) ((salt >> 8) & 0xff);
-                s[2] = (byte) ((salt >> 16) & 0xff);
-                s[3] = (byte) ((salt >> 24) & 0xff);
-                md.update(s);
-            }
-
-            md.update(password.getBytes("UTF8"));
-            bytes = md.digest();
-        } else {
-            // no hashing
-            bytes = password.getBytes("UTF8");
-        }
-
-        StringBuilder buf = new StringBuilder(32);
-        buf.append("{");
-        buf.append(algorithm);
-        buf.append("}");
-        buf.append(Base64.encode(bytes));
-
-        String digest = buf.toString();
-
-        return digest;
-    }
-
-    public static void main(String[] args) {
-
-        System.out.println("ok=" + encrypt("888888", 60));
-    }
-
 }
 

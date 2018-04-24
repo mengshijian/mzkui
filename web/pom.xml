@@ -28,7 +28,8 @@
         <commons.lang.version>2.6</commons.lang.version>
         <jdk.version>1.8</jdk.version>
         <slf4j.version>1.7.25</slf4j.version>
-        <log4j.version>2.10.0</log4j.version>
+        <log4j.version>2.8</log4j.version>
+        <swagger2.version>2.6.0</swagger2.version>
     </properties>
 
     <dependencies>
@@ -108,6 +109,14 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <!-- web依赖end -->
+
+        <!-- webSocket依赖begin -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
+        <!-- webSocket依赖end -->
+
         <!-- thymeleaf templet -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -161,6 +170,18 @@
             <artifactId>jjwt</artifactId>
             <version>0.9.0</version>
         </dependency>
+        <!-- swagger2 begin use to generate RESTful API -->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>${swagger2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>${swagger2.version}</version>
+        </dependency>
+        <!-- swagger2 end -->
         <!-- spring test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
