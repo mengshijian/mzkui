@@ -204,7 +204,6 @@
                 stripe
                 id="LogListTable"
                 :height='tableHeight + "px"'
-                @row-click='test'
                 >
                 <el-table-column
                 prop="termtyp"
@@ -238,12 +237,20 @@
                 width="200">
                 </el-table-column>
                 <el-table-column
-                prop="IMEI"
                 label="IMEI"
                 class-name='imeiClass'
-                v-popover:popover4
                 align='center'
                 width="300">
+                    <template slot-scope="scope">
+                        <el-popover
+                        placement="right">
+                        <p>这是一段内容这是一段内容确定删除吗？</p>
+                        <div style="text-align: right; margin: 0">
+                            这是一段内容,这是一段内容,这是一段内容,这是一段内容。
+                        </div>
+                            <span slot="reference" @click="imeiClick(scope.$index, scope.row)">{{scope.row.IMEI}}</span>
+                        </el-popover>
+                    </template>
                 </el-table-column>
                 <el-table-column
                 label="状态(未登录 / 登录)"
@@ -291,12 +298,6 @@
                 </el-pagination>
             </el-col>
         </el-row>
-        <el-popover
-            ref="popover4"
-            placement="right"
-            width="400"
-            trigger="click" content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。">
-        </el-popover>
     </div>
 </template>
 <script>
@@ -470,11 +471,9 @@ export default {
                 tableWidth < 600 ? this.traceFix = '' : this.traceFix = "right"
             })
       }, // 屏幕自适应事件
-      test(row, event, column) {
-          if (column.label === 'IMEI') {
-              console.log(row.IMEI)
-          }
-      }, // IMEI显示
+      imeiClick(index, row) {
+          console.log(index, row);
+      }, // IMEI悬浮
       userListCardBtnGruop(el) {
           let target = el.target; // 获取点击源
           switch (target.tagName) {
@@ -510,7 +509,7 @@ export default {
                     target.classList.remove('click_active'); // 节点源已选中的情况下删除选中状态，重置数据
                 }
           }
-      }
+      } // 筛选按钮组判断事件
   },
   mounted () {
       this.tableResize();

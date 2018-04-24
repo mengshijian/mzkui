@@ -75,6 +75,7 @@
                 border
                 stripe
                 id="LogListTable"
+                size="small"
                 :height='tableHeight + "px"'
                 >
                 <el-table-column
@@ -98,7 +99,7 @@
                 </el-table-column>
                 </el-table-column>
                 <el-table-column
-                prop="terminalNum"
+                prop="deviceId"
                 sortable
                 label="终端设备编号"
                 align='center'
@@ -106,30 +107,36 @@
                 </el-table-column>
                 <el-table-column
                 label="状态"
-                prop="state"
-                width='300'
+                width='350'
                 align='center'
                 >
                     <template slot-scope="scope">
-                        <span>{{scope.row.status}}</span>
-                        <el-steps :active='scope.row.status' process-status='success' align-center>
+                        <!-- <span v-stepText :url='scope.row.status || ""' :state='scope.row.status'>{{scope.row.status}}</span> -->
+                        <span v-if="scope.row.status === -1">提取失败</span>
+                        <span v-if="scope.row.status === 0">记录生成</span>
+                        <span v-if="scope.row.status === 1">命令下发</span>
+                        <span v-if="scope.row.status === 2">提取记录</span>
+                        <a :href='scope.row.status' v-if="scope.row.status === 3" download title="点击下载记录">提取成功</a>
+                        <span v-if="scope.row.status === 4">WEB参数错误</span>
+                        <el-steps v-if='scope.row.status < 4 && scope.row.status >= 0' :active='scope.row.status' finish-status='finish' process-status='success' align-center >
                             <el-step title="记录生成" ></el-step>
                             <el-step title="命令下发" ></el-step>
                             <el-step title="提取记录" ></el-step>
                             <el-step title="提取成功" ></el-step>
                         </el-steps>
-                        <!-- <el-progress :text-inside="true" :stroke-width="18" :percentage="70" v-if='scope.row.state=== "正在提取"'></el-progress>
-                        <el-progress :text-inside="true" :stroke-width="18" :percentage="50" v-if='scope.row.state=== "命令已下发"'></el-progress>
-                        <el-progress :text-inside="true" :stroke-width="18" :percentage="25" v-if='scope.row.state=== "记录生成"'></el-progress>
-                        <el-progress :text-inside="true" :stroke-width="18" :percentage="100" v-if='scope.row.state=== "提取成功"' status="success"></el-progress>
-                        <el-progress :text-inside="true" :stroke-width="18" :percentage="100" v-if='scope.row.state=== "提取失败"' status="exception"></el-progress> -->
+                         <el-steps :active='scope.row.status'  align-center v-if='scope.row.status === -1'>
+                            <el-step title="记录生成" ></el-step>
+                            <el-step title="命令下发" ></el-step>
+                            <el-step title="提取记录" ></el-step>
+                            <el-step title="执行失败" status="error"></el-step>
+                        </el-steps>
+                        <el-steps :active='0'  align-center v-if='scope.row.status === 4'>
+                            <el-step title="WEB参数错误" status="error"></el-step>
+                            <el-step title="记录生成" ></el-step>
+                            <el-step title="命令下发" ></el-step>
+                            <el-step title="提取记录" ></el-step>
+                        </el-steps>
                     </template>
-                </el-table-column>
-                <el-table-column
-                    prop="remark"
-                    align='center'
-                    label="描述"
-                >
                 </el-table-column>
             </el-table>
             </el-col>
@@ -148,51 +155,12 @@
     </div>
 </template>
 <script>
-import {Card, Table, TableColumn, Pagination, Dialog, Select, Option, Progress, Form, FormItem, DatePicker, Steps, Step} from 'element-ui'
+import {Card, Table, TableColumn, Pagination, Dialog, Select, Option, Form, FormItem, DatePicker, Steps, Step} from 'element-ui'
 export default {
   name: 'retrievalRecord',
   data () {
       return {
-          tableData4: [{
-              recordName: 'ctf',
-              recordAccount: 'xutianshun',
-              recordDate: '2018-04-18 03:51:54',
-              terminalNum: '1319398b481853285b93d06d836ab05f',
-              remark: '',
-              state: '正在提取'
-          },
-          {
-              recordName: 'ctf',
-              recordAccount: 'xutianshun',
-              recordDate: '2018-04-18 03:51:54',
-              terminalNum: '1319398b481853285b93d06d836ab05f',
-              remark: '',
-              state: '命令已下发'
-          },
-          {
-              recordName: 'ctf',
-              recordAccount: 'xutianshun',
-              recordDate: '2018-04-18 03:51:54',
-              terminalNum: '1319398b481853285b93d06d836ab05f',
-              remark: '',
-              state: '记录生成'
-          },
-          {
-              recordName: 'ctf',
-              recordAccount: 'xutianshun',
-              recordDate: '2018-04-18 03:51:54',
-              terminalNum: '1319398b481853285b93d06d836ab05f',
-              remark: '',
-              state:'提取成功'
-          },
-          {
-              recordName: 'ctf',
-              recordAccount: 'xutianshun',
-              recordDate: '2018-04-18 03:51:54',
-              terminalNum: '1319398b481853285b93d06d836ab05f',
-              remark: '',
-              state: '提取失败'
-          }],
+          tableData4: [],
           bestSearchShow: false,
           logStateVal: '',
           logDateVal: '',
@@ -231,7 +199,6 @@ export default {
       elDialog: Dialog,
       elSelect: Select,
       elOption: Option,
-      elProgress: Progress,
       elForm: Form,
       elFormItem: FormItem,
       elDatePicker: DatePicker,
@@ -278,7 +245,34 @@ export default {
   mounted () {
      this.tableResize();
      this.getTableData();
-  }
+  },
+//   directives: {
+//       stepText: {
+//           inserted: function (el, binding, vnode) {
+//              switch (el.getAttribute('state')) {
+//                  case '-1':
+//                      el.innerText = '执行失败'
+//                      break;
+//                 case '0':
+//                      el.innerText = '记录生成'
+//                      break;
+//                 case '1':
+//                      el.innerText = '命令已下发'
+//                 break;
+//                 case '2':
+//                      el.innerText = '终端已接收命令'
+//                 break;
+//                 case '3':
+//                      let url = el.getAttribute('url');
+//                      el.innerHTML = `<a href="${url}" download title='点击下载记录'>执行成功</a>`
+//                 break;
+//                 case '4':
+//                      el.innerText = 'WEB参数错误'
+//                 break;               
+//              }
+//           }
+//       }
+//   }
 }
 </script>
 <style>
