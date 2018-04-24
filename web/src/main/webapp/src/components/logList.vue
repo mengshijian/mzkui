@@ -133,16 +133,6 @@
              <el-form-item label="IMEI：">
                 <el-input type="text"  auto-complete="off"></el-input>
             </el-form-item>
-            <el-form-item label="终端类型：">
-                <el-select v-model="logSortVal" placeholder="Trace级别"  style="marginTop:-5px;width:100%">
-                    <el-option
-                    v-for="item in options"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                    </el-option>
-                </el-select>
-            </el-form-item>
             <el-form-item label="登录时间：" >
                  <el-date-picker
                 v-model="dateVal"
@@ -198,7 +188,7 @@
         <el-row>
             <el-col :span='24'>
                 <el-table
-                :data="tableData4"
+                :data="tableData"
                 border
                 size='small'
                 stripe
@@ -206,10 +196,15 @@
                 :height='tableHeight + "px"'
                 >
                 <el-table-column
-                prop="termtyp"
                 align='center'
                 label="终端类型"
                 width="120">
+                     <template slot-scope="scope">
+                        <span v-if="scope.row.clientType === 0">PC</span>
+                        <span v-if="scope.row.clientType === 1">平板</span>
+                        <span v-if="scope.row.clientType === 2">智能穿戴设备</span>
+                        <span v-if="scope.row.clientType === 3">移动设备</span>
+                    </template>
                 </el-table-column>
                 <el-table-column
                 prop="model"
@@ -218,20 +213,20 @@
                 width="120">
                 </el-table-column>
                 <el-table-column
-                prop="versions"
+                prop="version"
                 align='center'
                 label="版本"
                 sortable
                 width="120">
                 </el-table-column>
                 <el-table-column
-                prop="UID"
+                prop="userId"
                 label="UID"
                 align='center'
                 width="120">
                 </el-table-column>
                 <el-table-column
-                prop="Mac"
+                prop="macAddress"
                 label="Mac_Address"
                 align='center'
                 width="200">
@@ -248,7 +243,7 @@
                         <div style="text-align: right; margin: 0">
                             这是一段内容,这是一段内容,这是一段内容,这是一段内容。
                         </div>
-                            <span slot="reference" @click="imeiClick(scope.$index, scope.row)">{{scope.row.IMEI}}</span>
+                            <span slot="reference" @click="imeiClick(scope.$index, scope.row)">{{scope.row.imei}}</span>
                         </el-popover>
                     </template>
                 </el-table-column>
@@ -260,15 +255,17 @@
                         <el-switch
                             disabled
                             style="display: block"
-                            v-model="scope.row.state"
+                            v-model="scope.row.status"
                             active-color="#13ce66"
                             inactive-color="ff4949"
+                            :active-value='1'
+                            :inactive-value='0'
                             >
                         </el-switch>
                     </template>
                 </el-table-column>
                 <el-table-column
-                    prop="date"
+                    prop="lastLoginTime"
                     sortable
                     align='center'
                     label="最近一次登录时间"
@@ -292,9 +289,12 @@
                  <el-pagination
                     style="float:right"
                     :page-sizes="[10, 20, 30, 40]"
-                    :page-size="100"
+                    :page-size="30"
                     layout="total, sizes, prev, pager, next, jumper"
-                :total="400">
+                    background
+                    @size-change='changeSize'
+                    @current-change='changeCurrent'
+                    :total="400">
                 </el-pagination>
             </el-col>
         </el-row>
@@ -306,75 +306,14 @@ export default {
   name: 'logList',
   data () {
       return {
-        tableData4: [{
-          termtyp: 'PC',
-          model: 'XXXXX',
-          versions: '1.0',
-          UID: '!1671430928',
-          Mac: 200333,
-          IMEI: 456110210036376,
-          state: false,
-          date: '2016-05-03'
-        }, {
-          termtyp: 'PC',
-          model: 'XXXXX',
-          versions: '7.0',
-          UID: '!1671430928',
-          Mac: 200333,
-          IMEI: 456110210036376,
-          state: true,
-          date: '2016-05-03'
-        }, {
-          termtyp: 'PC',
-          model: 'XXXXX',
-          versions: '6.0',
-          UID: '!1671430928',
-          Mac: 200333,
-          IMEI: 456110210036376,
-          state: false,
-          date: '2016-05-03'
-        }, {
-         termtyp: 'PC',
-          model: 'XXXXX',
-          versions: '5.0',
-          UID: '!1671430928',
-          Mac: 200333,
-          IMEI: 456110210036376,
-          state: true,
-          date: '2016-05-03'
-        }, {
-         termtyp: 'PC',
-          model: 'XXXXX',
-          versions: '4.0',
-          UID: '!1671430928',
-          Mac: 200333,
-          IMEI: 456110210036376,
-          state: true,
-          date: '2016-05-03'
-        }, {
-          termtyp: 'PC',
-          model: 'XXXXX',
-          versions: '3.0',
-          UID: '!1671430928',
-          Mac: 200333,
-          IMEI: 456110210036376,
-          state: true,
-          date: '2016-05-03'
-        }, {
-          termtyp: 'PC',
-          model: 'XXXXX',
-          versions: '2.0',
-          UID: '!1671430928',
-          Mac: 200333,
-          IMEI: 456110210036376,
-          state: false,
-          date: '2016-05-03'
-        }],
+        tableData: [],
         tableHeight: '',
         traceShow: false,
         tracedata: '',
         traceVal: 'DEBUG',
         cmdVal: '',
+        size: null, // 每页条数
+        current: null, // 页数
         logSortVal: 'DEBUG',
         LogShow: false,
         bestSearchShow: false,
@@ -426,6 +365,11 @@ export default {
       elPopover: Popover
   },
   methods: {
+      getTableData (data = {}) {
+          this.$post('/onlineUser/list').then(res => {
+              this.tableData = res.data.data
+          })
+      },
       recordTrace (data) {
           this.tracedata = '';
           this.traceShow = true;
@@ -509,10 +453,20 @@ export default {
                     target.classList.remove('click_active'); // 节点源已选中的情况下删除选中状态，重置数据
                 }
           }
-      } // 筛选按钮组判断事件
+      }, // 筛选按钮组判断事件
+      changeSize (size) {
+        this.size = size;
+        this.current = null;
+        console.log(this.size, this.current)
+      }, // 每页条数改变
+      changeCurrent (current) {
+        this.current = current;
+        console.log(this.current)
+      }// 切换页
   },
   mounted () {
       this.tableResize();
+      this.getTableData();
   }
 }
 </script>

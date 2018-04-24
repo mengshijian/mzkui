@@ -71,7 +71,7 @@
         <el-row>
             <el-col :span='24'>
                 <el-table
-                :data="tableData4"
+                :data="tableData"
                 border
                 stripe
                 id="LogListTable"
@@ -141,13 +141,17 @@
             </el-table>
             </el-col>
         </el-row>
+        <!-- 表格数据 -->
         <el-row>
             <el-col class="page" >
                  <el-pagination
                     style="float:right"
                     :page-sizes="[10, 20, 30, 40]"
-                    :page-size="100"
+                    :page-size="30"
                     layout="total, sizes, prev, pager, next, jumper"
+                    background
+                    @size-change='changeSize'
+                    @current-change='changeCurrent'
                 :total="400">
                 </el-pagination>
             </el-col>
@@ -160,10 +164,12 @@ export default {
   name: 'retrievalRecord',
   data () {
       return {
-          tableData4: [],
+          tableData: [],
           bestSearchShow: false,
           logStateVal: '',
           logDateVal: '',
+          size: null, // 每页条数
+          current: null, // 页数
           tableHeight: '',
           options: [{
           value: '记录生成',
@@ -218,9 +224,12 @@ export default {
                 this.tableHeight = document.getElementsByClassName('el-main')[0].clientHeight - document.getElementsByClassName('box-card')[0].clientHeight - 115;
             })
       },
-      getTableData () {
-          this.$post('/extractLog/list').then(res => {
-              this.tableData4 = res.data.data
+      getTableData (data = {}) {
+          this.$post('/extractLog/list', {
+              pageSize: this.size || 30,
+              pageNumber: this.current || 1
+          }).then(res => {
+              this.tableData = res.data.data
           })
       },
       recordCardBtnGruop(el) {
@@ -240,39 +249,31 @@ export default {
                target.classList.remove('click_active'); // 节点源已选中的情况下删除选中状态，重置数据
           }
          
-      } // 筛选按钮
+      }, // 筛选按钮
+      changeSize (size) {
+        this.size = size;
+        this.current = null;
+        this.getTableData();
+      }, // 每页条数改变
+      changeCurrent (current) {
+        this.current = current;
+        this.getTableData();
+      }// 切换页
   },
   mounted () {
      this.tableResize();
      this.getTableData();
+    //  let ary =  [ { id: 1, name: '123' },{ id: 2, name: '123' },{ id: 1,name: '456' } ];
+    // let ary1 = [];
+    //  for (var i = 0; i < ary.length; i++) {
+    //      for (var y in ary[i]) {
+    //          let obj = {} 
+    //          obj[y] = ary[i][y]
+    //          ary1.push(obj)
+    //      }
+    //  }
+    //  console.log(ary1)
   },
-//   directives: {
-//       stepText: {
-//           inserted: function (el, binding, vnode) {
-//              switch (el.getAttribute('state')) {
-//                  case '-1':
-//                      el.innerText = '执行失败'
-//                      break;
-//                 case '0':
-//                      el.innerText = '记录生成'
-//                      break;
-//                 case '1':
-//                      el.innerText = '命令已下发'
-//                 break;
-//                 case '2':
-//                      el.innerText = '终端已接收命令'
-//                 break;
-//                 case '3':
-//                      let url = el.getAttribute('url');
-//                      el.innerHTML = `<a href="${url}" download title='点击下载记录'>执行成功</a>`
-//                 break;
-//                 case '4':
-//                      el.innerText = 'WEB参数错误'
-//                 break;               
-//              }
-//           }
-//       }
-//   }
 }
 </script>
 <style>
