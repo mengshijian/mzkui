@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn">
+    <appenders>
+        <Console name="Console" target="SYSTEM_OUT" ignoreExceptions="false">
+            <PatternLayout
+                    pattern="%d{HH:mm:ss.SSS} [%t] %M %-5level %logger{36} - %msg%n "/>
+        </Console>
+
+        <RollingFile name="RollingFileDebug" fileName="E:/log/mzkui-debug.log"
+                     filePattern="E:/log/${date:yyyy-MM}/mzkui-debug-%d{yyyy-MM-dd}-%i.log">
+            <Filters>
+                <ThresholdFilter level="INFO" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <ThresholdFilter level="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <PatternLayout pattern="[%d{HH:mm:ss:SSS}] [%t] [%p] - %l - %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="10 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="50">
+                <Delete basePath="E:/log" maxDepth="2">
+                    <IfFileName glob="*/mzkui-debug-*.log">
+                        <IfLastModified age="7d">
+                            <IfAny>
+                                <IfAccumulatedFileSize exceeds="1 GB" />
+                                <IfAccumulatedFileCount exceeds="50" />
+                            </IfAny>
+                        </IfLastModified>
+                    </IfFileName>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+
+        <RollingFile name="RollingFileInfo" fileName="E:/log/mzkui-info.log"
+                     filePattern="E:/log/${date:yyyy-MM}/mzkui-info-%d{MM-dd-yyyy}-%i.log"
+                     ignoreExceptions="false">
+            <Filters>
+                <ThresholdFilter level="INFO"/>
+                <ThresholdFilter level="WARN" onMatch="DENY" onMismatch="NEUTRAL"/>
+            </Filters>
+            <PatternLayout pattern="[%d{HH:mm:ss:SSS}] [%t] [%p] - %l - %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="10 MB"/>
+            </Policies>
+        </RollingFile>
+
+        <RollingFile name="RollingFileWarn" fileName="E:/log/mzkui-warn.log"
+                     filePattern="E:/log/${date:yyyy-MM}/mzkui-warn-%d{yyyy-MM-dd}-%i.log">
+            <Filters>
+                <ThresholdFilter level="WARN"/>
+                <ThresholdFilter level="ERROR" onMatch="DENY" onMismatch="NEUTRAL"/>
+            </Filters>
+            <PatternLayout pattern="[%d{HH:mm:ss:SSS}] [%t] [%p] - %l - %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="10 MB"/>
+            </Policies>
+        </RollingFile>
+
+        <RollingFile name="RollingFileError" fileName="E:/log/mzkui-error.log"
+                     filePattern="E:/log/${date:yyyy-MM}/mzkui-error-%d{yyyy-MM-dd}-%i.log">
+            <ThresholdFilter level="ERROR"/>
+            <PatternLayout pattern="[%d{HH:mm:ss:SSS}] [%t] [%p] - %l - %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="10 MB"/>
+            </Policies>
+        </RollingFile>
+
+    </appenders>
+    <Loggers>
+        <logger name="org.springframework" level="WARN"/>
+        <logger name="org.apache.curator" level="WARN"/>
+        <logger name="com.msj.mzkui" level="DEBUG">
+            <appender-ref ref="RollingFileDebug"/>
+        </logger>
+
+        <root level="debug">
+            <appender-ref ref="Console"/>
+            <appender-ref ref="RollingFileInfo"/>
+            <appender-ref ref="RollingFileWarn"/>
+            <appender-ref ref="RollingFileError"/>
+        </root>
+    </Loggers>
+</Configuration>
