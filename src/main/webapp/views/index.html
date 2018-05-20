@@ -1,0 +1,77 @@
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>猪猪</title>
+    <link rel="stylesheet" type="text/css" href="/static/easyui/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="/static/easyui/themes/icon.css">
+    <script type="text/javascript" src="/static/jquery-1.10.2.min.js"> </script>
+    <script type="text/javascript" src="/static/easyui/jquery.easyui.min.js"></script>
+    <style>
+        .tabledata{
+            border: 1px solid black;
+            width: 100%;
+            border-collapse:collapse;
+        }
+        .tabledata td{
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+<div class="easyui-layout" style="width: 99%;height:99%;">
+    <div data-options="region:'north'" style="height:14%">mzkui</div>
+    <div data-options="region:'east',split:true" title="East" style="width: 13%;"></div>
+    <div data-options="region:'west',split:true" title="节点树" style="width: 12%;"></div>
+    <div data-options="region:'center',title:'数据区'">
+        <table class="tabledata">
+            <caption>学生列表</caption>
+            <thead>
+            <tr>
+                <td>姓名</td>
+                <td>年龄</td>
+                <td>创建日期</td>
+                <td>更新日期</td>
+                <td>状态</td>
+            </tr>
+            </thead>
+            <tbody>
+            <#list items as item>
+            <tr>
+                <td>${item.name}</td>
+                <td>${item.age}</td>
+                <td>${item.createTime}</td>
+                <td>${item.updateTime}</td>
+                <td>${item.status}</td>
+            </tr>
+            </#list>
+            </tbody>
+        </table>
+        <button  name="output" id = "exportBtn" onclick="exportBtnFun()">导出</button>
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+    $(function(){
+    });
+function exportBtnFun(){
+    $.ajax({
+        type: 'POST',
+        url: "/index/check",
+        dataType: "json",
+        success: function(data){
+            var flag = true;
+            if (data.reqCode == 'exist'){
+                flag = confirm(data.reqMsg);
+            }
+            if (flag) {
+                window.location = "/index/downLoad";
+            }
+            console.log(data.reqCode);
+        },
+        error: function(data){
+          alert("error");
+        }
+    });
+}
+</script>
+</html>
