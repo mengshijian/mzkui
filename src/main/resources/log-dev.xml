@@ -70,11 +70,11 @@
 
     </appenders>
     <Loggers>
-        <logger name="org.springframework" level="WARN"/>
-        <logger name="org.apache.curator" level="WARN"/>
+        <logger name="org.springframework" level="INFO"/>
         <logger name="com.msj.mzkui" level="DEBUG">
             <appender-ref ref="RollingFileDebug"/>
         </logger>
+        <logger name="org.hibernate"  level="INFO"/>
 
         <root level="debug">
             <appender-ref ref="Console"/>

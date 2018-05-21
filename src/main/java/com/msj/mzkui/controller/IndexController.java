@@ -23,13 +23,26 @@ public class IndexController {
     private StudentService studentService;
 
     @RequestMapping(value = "/index",method = RequestMethod.GET)
+    @ResponseBody
     public ModelAndView toIndex(){
         ModelAndView model = new ModelAndView();
-        List<Student> list = studentService.findAll();
-        model.addObject("items",list);
         model.setViewName("index");
         return model;
     }
+
+    @RequestMapping(value = "/list",method = RequestMethod.POST)
+    @ResponseBody
+    public Map<String,Object> dataList(){
+        Map<String,Object> result = new HashMap<>();
+        List<Student> list = studentService.findAll();
+        result.put("total",list.size());
+        result.put("rows",list);
+        return result;
+    }
+
+
+
+
 
     @RequestMapping(value = "/downLoad")
     public void export(HttpServletResponse response){
