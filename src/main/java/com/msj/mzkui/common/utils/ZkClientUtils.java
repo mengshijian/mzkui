@@ -1,6 +1,7 @@
 package com.msj.mzkui.common.utils;
 
 import com.msj.mzkui.config.ZkClientProperties;
+import java.util.ArrayList;
 import org.I0Itec.zkclient.DataUpdater;
 import org.I0Itec.zkclient.ZkClient;
 import org.I0Itec.zkclient.serialize.SerializableSerializer;
@@ -106,6 +107,6 @@ public class ZkClientUtils {
         if (isInit() && checkNode(path)) {
             return zkClient.getChildren(path);
         }
-        return null;
+        return new ArrayList<>();
     }
 }

@@ -1,167 +1,25 @@
 <html>
 <head>
     <meta charset="UTF-8" />
-    <title>猪猪</title>
-    <link rel="stylesheet" type="text/css" href="/static/easyui/themes/default/easyui.css">
-    <link rel="stylesheet" type="text/css" href="/static/easyui/themes/icon.css">
-    <script type="text/javascript" src="/static/jquery-1.10.2.min.js"> </script>
-    <script type="text/javascript" src="/static/easyui/jquery.easyui.min.js"></script>
+    <title>zk-ui</title>
+    <#include "/include/common.html" >
 </head>
 <body>
 <div class="easyui-layout" style="width: 99%;height:99%;">
-    <div data-options="region:'north'" style="height:14%">mzkui${base!}</div>
-    <div data-options="region:'east',split:true" title="East" style="width: 13%;"></div>
-    <div data-options="region:'west',split:true" title="节点树" style="width: 12%;"></div>
-    <div data-options="region:'center',title:'数据区'">
-        <div id="tb" style="padding: 3px">
-            <span>节点名称:</span>
-            <input id="d_name" style="line-height: 26px; border: 1px solid #ccc" />
-            <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" onclick="doSearch()">查询</a>
-            <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add'" onclick="doAdd()">新增</a>
-            <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-clear'" onclick="doExport()">批量删除</a>
-            <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-export'" onclick="doExport()">导出选中</a>
+    <div data-options="region:'north'" style="height:14%">
+        <div id="top" class="easyui-accordion" fit="true" border="false">
+            <!--  导航内容 -->
+            <#include "/include/head.html" >
         </div>
-        <table id="dg"></table>
+    </div>
+    <div data-options="region:'east',split:true" title="East" style="width: 13%;"></div>
+    <div data-options="region:'west',split:true" title="节点树" style="width: 12%;">
+        <!--  导航内容 -->
+        <#include "/include/left.html" >
+    </div>
+    <div data-options="region:'center',title:'数据区'">
+        <#include "/include/data.html" />
     </div>
 </div>
 </body>
-<script type="text/javascript">
-    $(function () {
-        var IsCheckFlag = true;
-        $("#dg").datagrid({
-            url: '/index/list',
-            method:'post',
-            width: '100%',
-            height: '100%',
-            striped: true,     //交替行换色
-            rownumbers: true,  //行号
-            pagination: true,  //显示底部分页
-            fitColumns: true,//自动适应。先给列随便加个宽度
-            toolbar: "#tb",
-            idField: 'id',
-            checkOnSelect: false, //true，当用户点击行的时候该复选框就会被选中或取消选中。
-            selectOnCheck: true, //true，单击复选框将永远选择行。
-            columns:[[
-                {field:'id',title:'序号',width:80,sortable:true},
-                {field:'name',title:'名称',width:80,sortable:true},
-                {field:'age',title:'年龄',width:80,sortable:true},
-                {field:'createTime',title:'创建时间',width:80,align:'right',sortable:true,formatter:function (value,row,index) {
-                        return value;
-                    }
-                },
-                {field:'updateTime',title:'更新时间',width:80,align:'right',sortable:true,formatter:function (value,row,index){
-                        return value;
-                    }
-                },
-                {field:'status',title:'状态',width:60}
-            ]],
-            onClickRow: function (index, row) {
-                var d_id = row["d_id"];
-                //alert(d_id);
-            },
-            onClickCell: function (rowIndex, field, value) {
-                //alert(value);
-                IsCheckFlag = false;
-            },
-            onSelect: function (rowIndex, rowData) {
-                if (!IsCheckFlag) {
-                    IsCheckFlag = true;
-                    $("#tt").datagrid("unselectRow", rowIndex);
-                }
-            },
-            onUnselect: function (rowIndex, rowData) {
-                if (!IsCheckFlag) {
-                    IsCheckFlag = true;
-                    $("#tt").datagrid("selectRow", rowIndex);
-                }
-            }
-        });
-
-        var p = $('#dg').datagrid('getPager');
-
-        $(p).pagination({
-            /*
-                页数文本框前显示的汉字 修改每页默认条数
-                搜索pageList在jquery.easyui.min.js中修改，
-                分页区下拉分页数量集合和默认每页分页条数
-                striped属性 交替行换色
-            */
-            beforePageText: '第',
-            afterPageText: '页    共 {pages} 页',
-            displayMsg: '当前显示 {from}-{to} 条记录,共 {total} 条记录'
-        });
-    });
-
-    //搜索
-    function doSearch() {
-        $('#tt').datagrid('load', {
-            dname: $('#d_name').val(),
-            delse: $('#d_else').val()
-        });
-    };
-
-    //导出
-    function doExport() {
-        var models = [];
-        var rows = $('#tt').datagrid('getChecked');
-        for (var i = 0; i < rows.length; i++) {
-            models.push(rows[i].d_id);
-        }
-        alert(models.join(','));
-    }
-
-    //新增
-    function doAdd() {
-        alert("新增");
-    }
-
-    //格式化列数据
-    function formatPrice(val, row, index) {
-        if (row.d_amount < 1010) {
-            return '<span style="color:red;">' + val + '</span>';
-        } else {
-            return val;
-        }
-    }
-
-    //自定义操作列
-    function formatOper(val, row, index) {
-        var str = "";
-        str += '<a href="javascript:void(0);" onclick="doEdit(' + row.d_id + ')">修改</a>';
-        str += '  ';
-        str += '<a href="javascript:void(0);" onclick="doDelete(' + row.d_id + ')">删除</a>';
-        return str;
-    }
-
-    //编辑
-    function doEdit(id) {
-        alert(id);
-    }
-
-    //删除
-    function doDelete(id) {
-        alert(id);
-    }
-
-    function exportBtnFun() {
-        $.ajax({
-            type: 'POST',
-            url: "/index/check",
-            dataType: "json",
-            success: function (data) {
-                var flag = true;
-                if (data.reqCode == 'exist') {
-                    flag = confirm(data.reqMsg);
-                }
-                if (flag) {
-                    window.location = "/index/downLoad";
-                }
-                console.log(data.reqCode);
-            },
-            error: function (data) {
-                alert("error");
-            }
-        });
-    }
-</script>
 </html>

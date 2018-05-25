@@ -1,0 +1,35 @@
+
+<div id="nav" class="easyui-accordion" border="false" style="overflow: scroll;height: 99%;width: auto">
+
+</div>
+
+<div id="mm" class="easyui-menu" style="padding: 3px">
+    <div data-options="iconCls:'icon-add'" onclick="doAdd()">新增</div>
+    <div data-options="iconCls:'icon-remove'" onclick="doExport()">删除</div>
+    <div data-options="iconCls:'icon-filter'" onclick="doExport()">导出</div>
+</div>
+<script type="text/javascript">
+    var tree;
+    $(function () {
+        tree = $('#nav').tree({
+            url : "/zk/tree",
+            method : 'post',
+            queryParams : {},
+            animate:true,  //定义当节点展开折叠时是否显示动画效果
+            onContextMenu : function (e, node) {
+                e.preventDefault();
+                tree.tree('select', node.target);
+                // display context menu
+                $('#mm').menu('show', {
+                    left: e.pageX,
+                    top: e.pageY
+                });
+            },
+            checkbox:function(node){
+                if (node.id == 11 || node.id == 122){
+                    return true;
+                }
+            }
+        })
+    });
+</script>
