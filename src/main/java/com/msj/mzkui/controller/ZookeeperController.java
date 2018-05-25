@@ -14,11 +14,9 @@ import org.apache.commons.collections.map.AbstractHashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 @RequestMapping("/zk")
 public class ZookeeperController {
 
@@ -35,7 +33,6 @@ public class ZookeeperController {
     }
 
     @RequestMapping(value = "/tree",method = RequestMethod.POST)
-    @ResponseBody
     public List<Node> treeList(HttpServletRequest request){
         List<Node> nodesList = new ArrayList<>();
         String path = request.getParameter("path");
@@ -56,5 +53,29 @@ public class ZookeeperController {
             });
         }
         return nodesList;
+    }
+
+    @RequestMapping(value = "/list",method = RequestMethod.GET)
+    public List<Node> loadListByPath(String path){
+        List<Node> nodes = loadNode(path);
+        List<Node> list = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(nodes)){
+            nodes.forEach(e -> {
+                loadNodeValue(e,list);
+            });
+        }
+        return list;
+    }
+
+    private void loadNodeValue(Node node,List<Node> resultList){
+        List<Node> children = node.getChildren();
+        if (CollectionUtils.isNotEmpty(children)){
+            children.forEach(e -> {
+                loadNodeValue(e,resultList);
+            });
+        } else {
+            node.setValue(zkClientUtils.readNode(node.getPath()));
+            resultList.add(node);
+        }
     }
 }

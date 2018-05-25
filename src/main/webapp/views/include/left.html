@@ -1,5 +1,5 @@
 
-<div id="nav" class="easyui-accordion" border="false" style="overflow: scroll;height: 99%;width: auto">
+<div id="nav" class="easyui-tree" border="false" style="overflow: scroll;height: 99%;width: auto">
 
 </div>
 
@@ -25,10 +25,8 @@
                     top: e.pageY
                 });
             },
-            checkbox:function(node){
-                if (node.id == 11 || node.id == 122){
-                    return true;
-                }
+            onExpand:function (node) {
+                //tree.tree('reload',{"path":node.path});
             }
         })
     });

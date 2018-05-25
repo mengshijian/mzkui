@@ -8,17 +8,35 @@ import org.apache.commons.lang.StringUtils;
 
 public class Node {
 
+    /**
+     * 节点id
+     */
     private String id;
 
+    /**
+     * 节点值
+     */
+    private String value;
+
+    /**
+     * 节点名称
+     */
     private String text;
 
+    /**
+     * 节点路径
+     */
     private String path;
 
+    /**
+     * 前端展开状态:关闭
+     */
     private String state = "closed";
 
+    /**
+     * 子节点
+     */
     private List<Node> children;
-
-    private Map<String,String> attributes = new HashMap<>();
 
     public Node() {
     }
@@ -26,7 +44,6 @@ public class Node {
     public Node(String text, String path) {
         this.text = text;
         this.path = path;
-        attributes.put("path",path);
     }
 
     public String getText() {
@@ -37,20 +54,23 @@ public class Node {
         this.text = text;
     }
 
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
     public String getId() {
+        if (StringUtils.isBlank(id)){
+            this.id = path;
+        }
         return id;
     }
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public Map<String, String> getAttributes() {
-        return attributes;
-    }
-
-    public void setAttributes(Map<String, String> attributes) {
-        this.attributes = attributes;
     }
 
     public String getPath() {
