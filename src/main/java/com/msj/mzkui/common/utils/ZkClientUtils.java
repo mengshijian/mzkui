@@ -20,7 +20,9 @@ public class ZkClientUtils {
     private static ZkClient zkClient;
 
     public static void initZkClient(ZkClientProperties properties) {
-        zkClient = new ZkClient(properties.getServerAddress(), properties.getSessionTimeOut(), properties.getConnectionTimeOut(), new SerializableSerializer(), properties.getOperationRetryTimeout());
+        zkClient = new ZkClient(properties.getServerAddress(), properties.getSessionTimeOut(),
+                properties.getConnectionTimeOut(), new CusZkSerializer(),
+                properties.getOperationRetryTimeout());
     }
 
     /**

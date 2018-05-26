@@ -4,19 +4,19 @@ import com.msj.mzkui.common.utils.ZkClientUtils;
 import com.msj.mzkui.config.ZkClientProperties;
 import com.msj.mzkui.entity.Node;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.map.AbstractHashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
-@RestController
+@Controller
 @RequestMapping("/zk")
 public class ZookeeperController {
 
@@ -33,9 +33,10 @@ public class ZookeeperController {
     }
 
     @RequestMapping(value = "/tree",method = RequestMethod.POST)
+    @ResponseBody
     public List<Node> treeList(HttpServletRequest request){
         List<Node> nodesList = new ArrayList<>();
-        String path = request.getParameter("path");
+        String path = request.getParameter("id");
         if (StringUtils.isBlank(path)){
             path = PATH_SPLIT;
         }
@@ -46,16 +47,23 @@ public class ZookeeperController {
         List<Node> nodesList = new ArrayList<>();
         List<String> nodes = zkClientUtils.getTreeNode(path);
         if (CollectionUtils.isNotEmpty(nodes)){
+            if (!path.equalsIgnoreCase(PATH_SPLIT)){
+                path = path + PATH_SPLIT;
+            }
+            final String finalPath = path;
             nodes.forEach(e -> {
-                Node node = new Node(e, path + e);
-                node.setChildren(loadNode(node.getPath()));
-                nodesList.add(node);
+                if (!e.equalsIgnoreCase("dubbo")) {
+                    Node node = new Node(e, finalPath + e);
+                    node.setChildren(loadNode(node.getPath()));
+                    nodesList.add(node);
+                }
             });
         }
         return nodesList;
     }
 
     @RequestMapping(value = "/list",method = RequestMethod.GET)
+    @ResponseBody
     public List<Node> loadListByPath(String path){
         List<Node> nodes = loadNode(path);
         List<Node> list = new ArrayList<>();
@@ -77,5 +85,12 @@ public class ZookeeperController {
             node.setValue(zkClientUtils.readNode(node.getPath()));
             resultList.add(node);
         }
+    }
+
+    @RequestMapping(value = "/preAdd",method = RequestMethod.GET)
+    public ModelAndView preAdd(){
+        ModelAndView model = new ModelAndView();
+        model.setViewName("addOrUpdate");
+        return model;
     }
 }
