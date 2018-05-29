@@ -9,11 +9,12 @@
     <form id="ff" method="post" style="margin-top: 10%;margin-left: 15%">
         <div style="margin: 8px;">
             <label>节点名称:</label>
-            <input class="easyui-validatebox" type="text" name="text" data-options="required:true" />
+            <input class="easyui-validatebox" type="text" name="text" data-options="required:true" style="width: 55%"/>
+            <input type="hidden" name="path" id="parent_path"/>
         </div>
         <div style="margin: 8px;">
             <label>节&nbsp;点&nbsp;&nbsp;值:</label>
-            <input class="easyui-validatebox" type="text" name="value" data-options="required:true" />
+            <textarea name="value" placeholder="请输入key对应值" style="width: 55%;height: 80px"></textarea>
         </div>
     </form>
 </div>
@@ -82,7 +83,7 @@
 
     //搜索
     function doSearch() {
-        $('#tt').datagrid('load', {
+        $('#dg').datagrid('load', {
             dname: $('#d_name').val(),
             delse: $('#d_else').val()
         });
@@ -100,6 +101,7 @@
 
     //新增
     function doAdd() {
+        $("#parent_path").val(tree.tree('getSelected').path);
         $('#dl').dialog({
             title: '新增',
             width: '35%',
@@ -112,6 +114,22 @@
                     plain: true,
                     iconCls:'icon-ok',
                     handler:function(){
+                        var json = $("#ff").serializeObject();
+                        $.ajax({
+                            type: "POST",
+                            url: "/zk/save",
+                            dataType:"json",
+                            data: json,
+                            success: function(result){
+                                if (result.data){
+                                    dg.datagrid('reload',{
+                                        path:tree.tree('getSelected').path
+                                    })
+                                }else{
+
+                                }
+                            }
+                        });
                     }
                 },
                 {

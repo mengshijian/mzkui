@@ -132,11 +132,20 @@
             <version>4.0</version>
         </dependency>
 
+        <!-- zkclient begin -->
         <dependency>
             <groupId>com.101tec</groupId>
             <artifactId>zkclient</artifactId>
             <version>0.7</version>
         </dependency>
+         <!--zkclient end-->
+
+        <!--<dependency>
+            <groupId>org.apache.curator</groupId>
+            <artifactId>curator-recipes</artifactId>
+            <version>4.0.0</version>
+        </dependency>-->
+
         <!-- spring test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
