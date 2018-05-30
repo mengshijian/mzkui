@@ -33,7 +33,9 @@ public class ZkClientUtils {
         if (isInit() && !checkNode(path)) {
             zkClient.createPersistent(path,true);
             if (checkNode(path)) {
-                zkClient.writeData(path,data);
+                if (data != null){
+                    zkClient.writeData(path,data);
+                }
                 logger.debug("{} create success", path);
                 flag = true;
             }
@@ -73,16 +75,17 @@ public class ZkClientUtils {
         return flag;
     }
 
-    public static void saveOrUpdateNode(String path, Object data) {
+    public static boolean saveOrUpdateNode(String path, Object data) {
+        boolean flag = false;
         if (isInit()) {
             //如果节点存在,则更新
             if (checkNode(path)) {
-                updateNode(path, (DataUpdater) o -> data);
+                flag = updateNode(path, (DataUpdater) o -> data);
             }else {
-                createNode(path,data);
+                flag = createNode(path,data);
             }
         }
-        zkClient.exists(path);
+        return flag && zkClient.exists(path);
     }
 
     public static boolean deleteNode(String path, boolean recursive) {

@@ -11,14 +11,12 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 @RequestMapping("/zk")
 public class ZookeeperController extends BaseRestfulController {
 
@@ -35,9 +33,7 @@ public class ZookeeperController extends BaseRestfulController {
     }
 
     @RequestMapping(value = "/tree",method = RequestMethod.POST)
-    @ResponseBody
     public List<Node> treeList(HttpServletRequest request){
-        List<Node> nodesList = new ArrayList<>();
         String path = request.getParameter("id");
         if (StringUtils.isBlank(path)){
             path = PATH_SPLIT;
@@ -54,16 +50,17 @@ public class ZookeeperController extends BaseRestfulController {
             }
             final String finalPath = path;
             nodes.forEach(e -> {
-                Node node = new Node(e, finalPath + e);
-                node.setChildren(loadNode(node.getPath()));
-                nodesList.add(node);
+                if (!e.equalsIgnoreCase("dubbo")){
+                    Node node = new Node(e, finalPath + e);
+                    node.setChildren(loadNode(node.getPath()));
+                    nodesList.add(node);
+                }
             });
         }
         return nodesList;
     }
 
     @RequestMapping(value = "/list",method = RequestMethod.GET)
-    @ResponseBody
     public List<Node> loadListByPath(String path){
         if (path.equalsIgnoreCase(PATH_SPLIT)){
             return new ArrayList<>();
@@ -89,20 +86,31 @@ public class ZookeeperController extends BaseRestfulController {
         }
     }
 
-    @RequestMapping(value = "/preAdd",method = RequestMethod.GET)
-    public ModelAndView preAdd(){
-        ModelAndView model = new ModelAndView();
-        model.setViewName("addOrUpdate");
-        return model;
-    }
-
-    @RequestMapping(value = "/save",method = RequestMethod.POST)
+    @RequestMapping(value = "/saveOrUpdate",method = RequestMethod.POST)
     public ResResult<Boolean> addNode(@RequestBody Node node){
         boolean flag = false;
         if (StringUtils.isNotBlank(node.getText()) && StringUtils.isNotBlank(node.getPath())){
             node.setPath(node.getPath() + PATH_SPLIT + node.getText());
-            flag = zkClientUtils.createNode(node.getText(),node.getPath());
+            flag = zkClientUtils.saveOrUpdateNode(node.getPath(),node.getValue());
         }
         return resultSuccess(flag);
+    }
+
+    @RequestMapping(value = "/delete",method = RequestMethod.POST)
+    public ResResult<Boolean> deleteNode(@RequestBody Node node){
+        boolean flag = false;
+        if (StringUtils.isNotBlank(node.getPath())){
+           flag = zkClientUtils.deleteNode(node.getPath(),true);
+        }
+        return resultSuccess(flag);
+    }
+
+    @RequestMapping(value = "/load",method = RequestMethod.POST)
+    public ResResult<Node> loadNode (@RequestBody Node node) {
+        if (StringUtils.isNotBlank(node.getPath())) {
+            String value = zkClientUtils.readNode(node.getPath());
+            node.setValue(value);
+        }
+        return resultSuccess(node);
     }
 }

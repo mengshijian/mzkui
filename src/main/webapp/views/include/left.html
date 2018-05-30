@@ -4,8 +4,9 @@
 </div>
 
 <div id="mm" class="easyui-menu" style="padding: 3px">
-    <div data-options="iconCls:'icon-add'" onclick="doAdd()">新增</div>
-    <div data-options="iconCls:'icon-remove'" onclick="doDelete">删除</div>
+    <div data-options="iconCls:'icon-add'" onclick="saveOrUpdate('新增')">新增</div>
+    <div data-options="iconCls:'icon-remove'" onclick="doDelete()">删除</div>
+    <div data-options="iconCls:'icon-edit'" onclick="saveOrUpdate('修改')">修改</div>
     <div data-options="iconCls:'icon-export'" onclick="doExport()">导出</div>
 </div>
 <script type="text/javascript">
@@ -14,10 +15,10 @@
         tree = $('#nav').tree({
             url : "/zk/tree",
             method : 'post',
-            queryParams:{
-                "path":"/"
+            animate : true,  //定义当节点展开折叠时是否显示动画效果
+            filter: function(q, node){
+                return node.children.length > 0;
             },
-            animate:true,  //定义当节点展开折叠时是否显示动画效果
             onContextMenu : function (e, node) {
                 e.preventDefault();
                 tree.tree('select', node.target);

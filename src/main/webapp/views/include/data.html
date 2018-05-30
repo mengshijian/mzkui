@@ -99,11 +99,12 @@
         alert(models.join(','));
     }
 
-    //新增
-    function doAdd() {
-        $("#parent_path").val(tree.tree('getSelected').path);
+    //新增/编辑
+    function saveOrUpdate(title) {
+        var node = tree.tree('getSelected');
+        $("#parent_path").val(node.path);
         $('#dl').dialog({
-            title: '新增',
+            title: title,
             width: '35%',
             height: '30%',
             closed: true,
@@ -114,19 +115,21 @@
                     plain: true,
                     iconCls:'icon-ok',
                     handler:function(){
-                        var json = $("#ff").serializeObject();
+                        var jsonData = $("#ff").serializeObject();
                         $.ajax({
                             type: "POST",
-                            url: "/zk/save",
+                            url: "/zk/saveOrUpdate",
                             dataType:"json",
-                            data: json,
+                            data: JSON.stringify(jsonData),
+                            contentType:'application/json;charset=UTF-8',
                             success: function(result){
                                 if (result.data){
                                     dg.datagrid('reload',{
-                                        path:tree.tree('getSelected').path
+                                        path:node.path
                                     })
+                                    $('#dl').dialog('close');
                                 }else{
-
+                                    $.messager.alert('info',result.msg);
                                 }
                             }
                         });
@@ -141,37 +144,45 @@
 
                     }
                 }
-            ]
+            ],
+            onBeforeOpen : function () {
+
+                $.ajax({
+                    type: "POST",
+                    url: "/zk/load",
+                    dataType:"json",
+                    data: JSON.stringify({"path":tree.tree('getSelected').path}),
+                    contentType:'application/json;charset=UTF-8',
+                    success: function(result){
+                        if (result.data){
+                            $("input[name='text']").val(node.text);
+                            $("input[name='path']").val(node.path);
+                            $("textarea[name='value']").val(result.data.value);
+                        }
+                    }
+                });
+            }
         });
         $("#dl").dialog("open");
     }
 
-    //格式化列数据
-    function formatPrice(val, row, index) {
-        if (row.d_amount < 1010) {
-            return '<span style="color:red;">' + val + '</span>';
-        } else {
-            return val;
-        }
-    }
-
-    //自定义操作列
-    function formatOper(val, row, index) {
-        var str = "";
-        str += '<a href="javascript:void(0);" onclick="doEdit(' + row.d_id + ')">修改</a>';
-        str += '  ';
-        str += '<a href="javascript:void(0);" onclick="doDelete(' + row.d_id + ')">删除</a>';
-        return str;
-    }
-
-    //编辑
-    function doEdit(id) {
-        alert(id);
-    }
-
     //删除
-    function doDelete(id) {
-        alert(id);
+    function doDelete() {
+        $.ajax({
+            type: "POST",
+            url: "/zk/delete",
+            dataType:"json",
+            data: JSON.stringify({"path":tree.tree('getSelected').path}),
+            contentType:'application/json;charset=UTF-8',
+            success: function(result){
+                if (result.data){
+                    tree.tree('reload');
+                    dg.datagrid('reload');
+                }else{
+                    $.messager.alert('info',result.msg);
+                }
+            }
+        });
     }
 
     function exportBtnFun() {
