@@ -22,14 +22,6 @@ public class IndexController {
     @Autowired
     private StudentService studentService;
 
-    @RequestMapping(value = "/index",method = RequestMethod.GET)
-    @ResponseBody
-    public ModelAndView toIndex(){
-        ModelAndView model = new ModelAndView();
-        model.setViewName("index");
-        return model;
-    }
-
     @RequestMapping(value = "/list",method = RequestMethod.POST)
     @ResponseBody
     public Map<String,Object> dataList(){
@@ -39,9 +31,6 @@ public class IndexController {
         result.put("rows",list);
         return result;
     }
-
-
-
 
 
     @RequestMapping(value = "/downLoad")
