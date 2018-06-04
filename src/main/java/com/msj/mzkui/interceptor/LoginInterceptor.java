@@ -58,6 +58,7 @@ public class LoginInterceptor implements HandlerInterceptor {
         logger.info(loginUrl + request.getRequestURI());
         UserInfo userInfo = (UserInfo) session.getAttribute(HttpConstant.SESSION_USER);
         if (userInfo == null){
+            response.sendRedirect("/user/index");
             return false;
         }
         return true;

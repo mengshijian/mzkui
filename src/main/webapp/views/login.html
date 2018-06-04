@@ -5,32 +5,31 @@
     <#include "/include/common.html" >
 </head>
 <body>
-    <form id="lf" method="post">
-        <div>
-            <span>用户名:</span>
-            <input class="easyui-validatebox" type="text" name="userName" data-options="required:true" />
-        </div>
-        <div>
-            <span>密码:</span>
-            <input class="easyui-validatebox" type="password" name="password" data-options="required:true" />
-        </div>
-        <div>
-            <input type="button" onclick="submitForm();" name="tijiao" value="提交"/>
-        </div>
-    </form>
+    <div>
+        <form id="lf" method="post" action="/user/login">
+            <div>
+                <span>用户名:</span>
+                <input class="easyui-validatebox" type="text" name="userName" data-options="required:true" />
+            </div>
+            <div>
+                <span>密码:</span>
+                <input class="easyui-validatebox" type="password" name="password" data-options="required:true" />
+            </div>
+            <div>
+                <input type="button" onclick="submitForm();" name="tijiao" value="提交"/>
+            </div>
+        </form>
+    </div>
 </body>
 </html>
 <script>
     function submitForm() {
-        $('#lf').form('submit', {
-            url:"/user/login",
-            onSubmit: function(){
-                var isValid = $(this).form('validate');
-                if (!isValid){
-                    $.messager.alert('错误',"用户名或密码不能为空");
-                }
-                return isValid;
-            }
-        });
+        var userName = $("input[name='userName']").val();
+        var password = $("input[name='password']").val();
+        if (!userName.length > 0 || !password.length > 0){
+            $.messager.alert('错误',"用户名或密码不能为空");
+        } else {
+            $("#lf").submit();
+        }
     }
 </script>
