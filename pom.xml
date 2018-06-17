@@ -114,6 +114,13 @@
             <version>1.0.31</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/dom4j/dom4j xml文档导出 -->
+        <dependency>
+            <groupId>dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <version>1.6</version>
+        </dependency>
+
         <!-- jwt -->
         <dependency>
             <groupId>com.auth0</groupId>

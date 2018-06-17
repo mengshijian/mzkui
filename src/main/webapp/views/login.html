@@ -5,19 +5,26 @@
     <#include "/include/common.html" >
 </head>
 <body>
-    <div>
+    <div style="height: 80%;margin: 5%;width: 90%;background-color: #d7dcc117;position: absolute;">
         <form id="lf" method="post" action="/user/login">
-            <div>
-                <span>用户名:</span>
-                <input class="easyui-validatebox" type="text" name="userName" data-options="required:true" />
-            </div>
-            <div>
-                <span>密码:</span>
-                <input class="easyui-validatebox" type="password" name="password" data-options="required:true" />
-            </div>
-            <div>
-                <input type="button" onclick="submitForm();" name="tijiao" value="提交"/>
-            </div>
+            <fieldset style="text-align: center;width: 20%;position: absolute;margin-top: 18%;margin-left: 36%;border-radius: 5px;">
+                <legend>登录系统</legend>
+                <table style="border-radius: 5px;">
+                    <tr>
+                       <td>用户名:</td>
+                       <td><input class="easyui-validatebox input" style="border-radius: 2px;" placeholder="请输入用户名" type="text" name="userName" data-options="required:true" /></td>
+                    </tr>
+                    <tr>
+                        <td>密&nbsp;码:</td>
+                        <td><input class="easyui-validatebox" style="border-radius: 2px;" type="password" placeholder="请输入密码" name="password" data-options="required:true" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="text-align: center;">
+                            <input type="button" onclick="submitForm();" name="tijiao" value="提交"/>
+                        </td>
+                    </tr>
+                </table>
+            </fieldset>
         </form>
     </div>
 </body>

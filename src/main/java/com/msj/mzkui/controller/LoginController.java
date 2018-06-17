@@ -47,13 +47,17 @@ public class LoginController extends com.msj.mzkui.controller.BaseRestfulControl
         return model;
     }
 
-    @RequestMapping(value = {"/login"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/login"})
     public String login(UserInfo userInfo,HttpServletRequest request) {
+        HttpSession session =  request.getSession();
+        UserInfo sessionUser = (UserInfo) session.getAttribute(HttpConstant.SESSION_USER);
+        if (sessionUser != null){
+            return "main";
+        }
         String userName = userInfo.getUserName();
         String password = userInfo.getPassword();
         if (userMap.containsKey(userName) && password
                 .equalsIgnoreCase(userMap.get(userName))) {
-            HttpSession session =  request.getSession();
             session.setAttribute(HttpConstant.SESSION_USER,userInfo);
             return "main";
         } else {
@@ -61,7 +65,7 @@ public class LoginController extends com.msj.mzkui.controller.BaseRestfulControl
         }
     }
 
-    @RequestMapping(value = {"/logout"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/logout"}, method = RequestMethod.GET)
     public String logout(HttpServletRequest request) {
         HttpSession session =  request.getSession();
         session.removeAttribute(HttpConstant.SESSION_USER);

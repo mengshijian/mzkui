@@ -1,16 +1,23 @@
 package com.msj.mzkui.controller;
 
+import com.msj.mzkui.common.utils.XMLUtils;
 import com.msj.mzkui.common.utils.ZkClientUtils;
 import com.msj.mzkui.config.ZkClientProperties;
 import com.msj.mzkui.controller.vo.ResResult;
 import com.msj.mzkui.entity.Node;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,6 +26,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/zk")
 public class ZookeeperController extends BaseRestfulController {
+
+    private static final Logger logger = LoggerFactory.getLogger(ZookeeperController.class);
 
     private static final String PATH_SPLIT = "/";
 
@@ -62,17 +71,22 @@ public class ZookeeperController extends BaseRestfulController {
 
     @RequestMapping(value = "/list",method = RequestMethod.GET)
     public List<Node> loadListByPath(String path){
-        if (path.equalsIgnoreCase(PATH_SPLIT)){
-            return new ArrayList<>();
+        try {
+            if (path.equalsIgnoreCase(PATH_SPLIT)){
+                return new ArrayList<>();
+            }
+            List<Node> nodes = loadNode(path);
+            List<Node> list = new ArrayList<>();
+            if (CollectionUtils.isNotEmpty(nodes)){
+                nodes.forEach(e -> {
+                    loadNodeValue(e,list);
+                });
+            }
+            return list;
+        } catch (Exception e){
+            logger.error("查询异常:{}",e);
         }
-        List<Node> nodes = loadNode(path);
-        List<Node> list = new ArrayList<>();
-        if (CollectionUtils.isNotEmpty(nodes)){
-            nodes.forEach(e -> {
-                loadNodeValue(e,list);
-            });
-        }
-        return list;
+        return null;
     }
 
     private void loadNodeValue(Node node,List<Node> resultList){
@@ -112,5 +126,21 @@ public class ZookeeperController extends BaseRestfulController {
             node.setValue(value);
         }
         return resultSuccess(node);
+    }
+
+    @RequestMapping(value = "/export",method = RequestMethod.GET)
+    public void exportXml(String root,HttpServletResponse response){
+        try {
+            List<Node> nodesList = loadNode(root);
+            // 设置response头信息
+            response.reset(); // 清空输出流
+            response.setContentType("APPLICATION/OCTET-STREAM"); // 定义输出类型
+            String xmlName = new String(root.substring(root.lastIndexOf("/") + 1).getBytes("gbk"), "ISO-8859-1");
+            response.setHeader("Content-disposition", "attachment;  filename=" + xmlName + ".xml");
+            response.setCharacterEncoding("UTF-8");
+            XMLUtils.CreateXMLByDOM4J(nodesList,response.getOutputStream());
+        } catch (IOException e) {
+            logger.error("文件导出异常:{}",e);
+        }
     }
 }

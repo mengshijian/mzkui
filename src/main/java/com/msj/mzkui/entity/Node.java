@@ -1,6 +1,7 @@
 package com.msj.mzkui.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.msj.mzkui.common.annotation.FieldName;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,7 @@ public class Node {
     /**
      * 节点id
      */
+    @FieldName(Ignore = true)
     private String id;
 
     /**
@@ -31,6 +33,7 @@ public class Node {
     /**
      * 前端展开状态:关闭
      */
+    @FieldName(Ignore = true)
     private String state = "closed";
 
     /**

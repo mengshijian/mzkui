@@ -84,19 +84,14 @@
     //搜索
     function doSearch() {
         $('#dg').datagrid('load', {
-            dname: $('#d_name').val(),
-            delse: $('#d_else').val()
+            path: $('#d_name').val()
         });
     };
 
     //导出
     function doExport() {
-        var models = [];
-        var rows = $('#tt').datagrid('getChecked');
-        for (var i = 0; i < rows.length; i++) {
-            models.push(rows[i].d_id);
-        }
-        alert(models.join(','));
+        var node = $('#nav').tree('getSelected');
+        window.location.href = "/zk/export?root=" + node.id;
     }
 
     //新增/编辑

@@ -5,19 +5,18 @@
     <#include "/include/common.html" >
 </head>
 <body>
-<div class="easyui-layout" style="width: 99%;height:99%;">
+<div class="easyui-layout" style="width: 100%;height:99%;">
     <div data-options="region:'north'" style="height:14%">
-        <div id="top" class="easyui-accordion" fit="true" border="false">
-            <!--  导航内容 -->
-            <#include "/include/head.html" >
-        </div>
+        <#include "/include/head.html" >
     </div>
-    <div data-options="region:'east',split:true" title="East" style="width: 13%;"></div>
-    <div data-options="region:'west',split:true" title="节点树" style="width: 12%;">
+    <div data-options="region:'east',split:true" title="工具" style="width: 13%;">
+        <#include "/include/tool.html" >
+    </div>
+    <div data-options="region:'west',split:true" title="导航" style="width: 12%;">
         <!--  导航内容 -->
         <#include "/include/left.html" >
     </div>
-    <div data-options="region:'center',title:'数据区'">
+    <div data-options="region:'center',title:'数据'">
         <#include "/include/data.html" />
     </div>
 </div>
