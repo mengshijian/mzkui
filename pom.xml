@@ -70,6 +70,13 @@
         </dependency>
         <!-- web依赖end -->
 
+        <!-- webSocket依赖begin -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
+        <!-- webSocket依赖end -->
+
         <!-- freemarker template -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

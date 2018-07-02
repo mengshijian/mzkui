@@ -1,7 +1,6 @@
 package com.msj.mzkui.controller;
 
 import com.msj.mzkui.common.consts.HttpConstant;
-import com.msj.mzkui.common.utils.MD5Encrypt;
 import com.msj.mzkui.entity.UserInfo;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
