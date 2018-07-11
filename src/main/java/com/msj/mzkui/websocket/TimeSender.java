@@ -1,6 +1,6 @@
 package com.msj.mzkui.websocket;
 
-import com.cootf.log4droid.websocket.entity.ServerMessage;
+import com.msj.mzkui.websocket.entity.ServerMessage;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
