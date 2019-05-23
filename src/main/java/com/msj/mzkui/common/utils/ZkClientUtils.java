@@ -1,18 +1,16 @@
 package com.msj.mzkui.common.utils;
 
 import com.msj.mzkui.config.ZkClientProperties;
-import java.util.ArrayList;
 import org.I0Itec.zkclient.DataUpdater;
 import org.I0Itec.zkclient.ZkClient;
-import org.I0Itec.zkclient.serialize.SerializableSerializer;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
+@Deprecated
 public class ZkClientUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(ZkClientUtils.class);

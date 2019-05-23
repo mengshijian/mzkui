@@ -34,8 +34,8 @@ public class StudentServiceImpl implements StudentService {
                 student.setId(resultSet.getString("id"));
                 student.setName(resultSet.getString("name"));
                 student.setAge(resultSet.getInt("age"));
-                student.setCreateTime(resultSet.getDate("create_time"));
-                student.setUpdateTime(resultSet.getDate("update_time"));
+                student.setCreateTime(resultSet.getTimestamp("create_time"));
+                student.setUpdateTime(resultSet.getTimestamp("update_time"));
                 student.setStatus(resultSet.getInt("status"));
                 return student;
             }

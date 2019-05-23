@@ -5,26 +5,26 @@ import com.msj.mzkui.common.utils.ZkClientUtils;
 import com.msj.mzkui.config.ZkClientProperties;
 import com.msj.mzkui.controller.vo.ResResult;
 import com.msj.mzkui.entity.Node;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
-import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequestMapping("/zk")
+@Deprecated
 public class ZookeeperController extends BaseRestfulController {
 
     private static final Logger logger = LoggerFactory.getLogger(ZookeeperController.class);
@@ -36,7 +36,7 @@ public class ZookeeperController extends BaseRestfulController {
 
     private ZkClientUtils zkClientUtils;
 
-    @PostConstruct
+    //@PostConstruct
     public void initZk(){
         ZkClientUtils.initZkClient(zkClientProperties);
     }

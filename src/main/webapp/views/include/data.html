@@ -1,6 +1,6 @@
 <div id="tb" style="padding: 3px">
     <span>节点名称:</span>
-    <input id="d_name" style="line-height: 26px; border: 1px solid #ccc" />
+    <input id="d_name" style="line-height: 26px; border: 1px solid #ccc;border-radius: 5px" />
     <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" onclick="doSearch()">查询</a>
 </div>
 <table id="dg"></table>
@@ -9,14 +9,20 @@
     <form id="ff" method="post" style="margin-top: 10%;margin-left: 15%">
         <div style="margin: 8px;">
             <label>节点名称:</label>
-            <input class="easyui-validatebox" type="text" name="text" data-options="required:true" style="width: 55%"/>
+            <input class="easyui-validatebox" placeholder="请输入节点key" type="text" name="text" style="width: 55%"/>
             <input type="hidden" name="path" id="parent_path"/>
         </div>
         <div style="margin: 8px;">
             <label>节&nbsp;点&nbsp;&nbsp;值:</label>
-            <textarea name="value" placeholder="请输入key对应值" style="width: 55%;height: 80px"></textarea>
+            <textarea name="value" placeholder="请输入key对应值" data-options="required:true" style="width: 55%;height: 80px"></textarea>
         </div>
     </form>
+</div>
+
+<div id="ds" style="display: none;">
+    <select id="cc" class="easyui-combotree" style="width:200px;"
+            data-options="url:'get_data.php',required:true">
+    </select>
 </div>
 
 <script type="text/javascript">
@@ -94,8 +100,149 @@
         window.location.href = "/zk/export?root=" + node.id;
     }
 
-    //新增/编辑
-    function saveOrUpdate(title) {
+    //新增
+    function create(){
+        var node = tree.tree('getSelected');
+        $("#parent_path").val(node.path);
+        $('#dl').dialog({
+            title: '新增',
+            width: '35%',
+            height: '30%',
+            closed: true,
+            modal: true,
+            buttons:[
+                {
+                    text:'提交',
+                    plain: true,
+                    iconCls:'icon-ok',
+                    handler:function(){
+                        var jsonData = $("#ff").serializeObject();
+                        $.ajax({
+                            type: "POST",
+                            url: "/zk/saveOrUpdate",
+                            dataType:"json",
+                            data: JSON.stringify(jsonData),
+                            contentType:'application/json;charset=UTF-8',
+                            success: function(result){
+                                if (result.data){
+                                    dg.datagrid('reload',{
+                                        path:node.path
+                                    })
+                                    $('#dl').dialog('close');
+                                }else{
+                                    $.messager.alert('info',result.msg);
+                                }
+                            }
+                        });
+                    }
+                },
+                {
+                    text:'取消',
+                    plain: true,
+                    iconCls:'icon-cancel',
+                    handler:function(){
+                        //关闭
+                        $('#dl').dialog('close');
+
+                    }
+                }
+            ],
+            onBeforeOpen : function (){
+                $("input[name='text']").val('');
+                $("input[name='text']").removeAttr('readonly');
+                $("textarea[name='value']").val('');
+            }
+        });
+        $("#dl").dialog("open");
+    }
+
+    //编辑
+    function update() {
+        var node = tree.tree('getSelected');
+        $("#parent_path").val(node.path);
+        $('#dl').dialog({
+            title: '修改',
+            width: '35%',
+            height: '30%',
+            closed: true,
+            modal: true,
+            buttons:[
+                {
+                    text:'提交',
+                    plain: true,
+                    iconCls:'icon-ok',
+                    handler:function(){
+                        var jsonData = $("#ff").serializeObject();
+                        $.ajax({
+                            type: "POST",
+                            url: "/zk/saveOrUpdate",
+                            dataType:"json",
+                            data: JSON.stringify(jsonData),
+                            contentType:'application/json;charset=UTF-8',
+                            success: function(result){
+                                if (result.data){
+                                    dg.datagrid('reload',{
+                                        path:node.path
+                                    })
+                                    $('#dl').dialog('close');
+                                }else{
+                                    $.messager.alert('info',result.msg);
+                                }
+                            }
+                        });
+                    }
+                },
+                {
+                    text:'取消',
+                    plain: true,
+                    iconCls:'icon-cancel',
+                    handler:function(){
+                        //关闭
+                        $('#dl').dialog('close');
+
+                    }
+                }
+            ],
+            onBeforeOpen : function () {
+                $.ajax({
+                    type: "POST",
+                    url: "/zk/load",
+                    dataType:"json",
+                    data: JSON.stringify({"path":tree.tree('getSelected').path}),
+                    contentType:'application/json;charset=UTF-8',
+                    success: function(result){
+                        if (result.data){
+                            $("input[name='text']").val(node.text);
+                            $("input[name='text']").attr('readonly','readonly');
+                            $("textarea[name='value']").val(result.data.value);
+                        }
+                    }
+                });
+            }
+        });
+        $("#dl").dialog("open");
+    }
+
+    //删除
+    function doDelete() {
+        $.ajax({
+            type: "POST",
+            url: "/zk/delete",
+            dataType:"json",
+            data: JSON.stringify({"path":tree.tree('getSelected').path}),
+            contentType:'application/json;charset=UTF-8',
+            success: function(result){
+                if (result.data){
+                    tree.tree('reload');
+                    dg.datagrid('reload');
+                }else{
+                    $.messager.alert('info',result.msg);
+                }
+            }
+        });
+    }
+
+    function copy() {
         var node = tree.tree('getSelected');
         $("#parent_path").val(node.path);
         $('#dl').dialog({
@@ -136,12 +283,12 @@
                     iconCls:'icon-reload',
                     handler:function(){
                         //清空表单
+                        $("textarea[name='value']").val('');
 
                     }
                 }
             ],
             onBeforeOpen : function () {
-
                 $.ajax({
                     type: "POST",
                     url: "/zk/load",
@@ -159,25 +306,6 @@
             }
         });
         $("#dl").dialog("open");
-    }
-
-    //删除
-    function doDelete() {
-        $.ajax({
-            type: "POST",
-            url: "/zk/delete",
-            dataType:"json",
-            data: JSON.stringify({"path":tree.tree('getSelected').path}),
-            contentType:'application/json;charset=UTF-8',
-            success: function(result){
-                if (result.data){
-                    tree.tree('reload');
-                    dg.datagrid('reload');
-                }else{
-                    $.messager.alert('info',result.msg);
-                }
-            }
-        });
     }
 
     function exportBtnFun() {

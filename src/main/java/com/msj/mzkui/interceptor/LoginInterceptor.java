@@ -1,23 +1,17 @@
 package com.msj.mzkui.interceptor;
 
-import com.alibaba.fastjson.JSONObject;
-import com.msj.mzkui.common.consts.Constant;
 import com.msj.mzkui.common.consts.HttpConstant;
-import com.msj.mzkui.common.utils.JwtUtils;
 import com.msj.mzkui.entity.UserInfo;
-import io.jsonwebtoken.Claims;
-import java.net.URLDecoder;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  * ClassName: CustomChekInterceptor
